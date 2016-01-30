@@ -55,19 +55,24 @@ angular
     });
 
   })
-  .run(function ($rootScope, $location, $cookieStore) {
+  .run(function ($rootScope, $location, AuthenticationService) {
 
     // redirects to the authentication if user is not
     // authenticated
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
       // redirect to login page if not logged in and trying to access a restricted page
       var restrictedPage = $.inArray($location.path(), ['/authentication']) === -1;
-      var globals = $cookieStore.get('globals');
-      var loggedIn = globals &&  globals.currentUser ? globals.currentUser : false;
-      if (restrictedPage && !loggedIn) {
-        console.log('not logged in');
-        $location.path('/authentication');
-      }
+      AuthenticationService.verifyAuthentication(function (isAuthenticated) {
+        if (restrictedPage && !isAuthenticated) {
+          $location.path('/authentication');
+        } else {
+          var userInfo = AuthenticationService.getUserInfo();
+          if (userInfo) {
+            // assigning user object for the header
+            $rootScope.userInfo = userInfo;
+          }
+        }
+      });
     });
 
   });
