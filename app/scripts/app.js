@@ -18,7 +18,8 @@ angular
     'ngTouch',
     'facebook',
     'ui-notification',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'checklist-model'
   ])
   .config(function ($routeProvider, FacebookProvider, NotificationProvider) {
     $routeProvider

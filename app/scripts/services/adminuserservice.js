@@ -30,4 +30,17 @@ angular.module('frontendApp')
       )
     };
 
+    this.updateRoles = function (fbUserId, roles, callback) {
+      LambdaService.callLambda(
+        'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-update_roles:development',
+        {
+          'fbUserId': fbUserId,
+          'roles': roles
+        },
+        function (response) {
+          callback(response);
+        }
+      )
+    };
+
   });

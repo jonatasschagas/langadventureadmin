@@ -20,6 +20,7 @@ angular.module('frontendApp')
           $rootScope.$on('userLoggedIn', function () {
             $scope.user = AuthenticationHolderService.getUserInfo();
             $scope.isLoggedIn = $scope.user && $scope.user.fbUserId;
+            $scope.$apply();
           });
 
           $scope.logout = function () {

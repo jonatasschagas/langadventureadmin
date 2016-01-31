@@ -9,7 +9,7 @@
  */
 angular.module('frontendApp')
   .controller('AdminusermanagementCtrl',
-  function ($scope, $location, Notification, AuthenticationHolderService, AdminUserService) {
+  function ($scope, $location, $uibModal, Notification, AuthenticationHolderService, AdminUserService) {
 
     if (!AuthenticationHolderService.userHasRole('admin')) {
       $location.path('/Unauthorized');
@@ -35,5 +35,25 @@ angular.module('frontendApp')
     };
 
     $scope.reload();
+
+    $scope.editAdminUserRoles = function (adminUser) {
+      var editAdminUserRolesInstance = $uibModal.open({
+        animation: $scope.animationsEnabled,
+        templateUrl: 'views/editadminuserroles.html',
+        controller: 'EditadminuserrolesCtrl',
+        size: 'lg',
+        resolve: {
+          adminUser: function () {
+            return adminUser;
+          }
+        }
+      });
+
+      editAdminUserRolesInstance.result.then(function () {
+        $scope.reload();
+      }, function () {
+        $scope.reload();
+      });
+    };
 
   });

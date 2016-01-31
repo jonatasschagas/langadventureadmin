@@ -1,0 +1,18 @@
+<div class="container">
+
+  <h3>{{adminUser.UserName}}</h3>
+
+  <h5>Roles:</h5>
+
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="role in availableRoles">
+      <input type="checkbox" checklist-model="adminUser.UserRoles" checklist-value="role"> {{role}}
+    </li>
+  </ul>
+
+  <button type="button" ng-click="save()" class="btn btn-primary btn-sm">Save</button>
+
+  <hr/>
+
+</div>
+
