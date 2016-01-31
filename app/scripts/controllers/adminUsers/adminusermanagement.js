@@ -39,7 +39,7 @@ angular.module('frontendApp')
     $scope.editAdminUserRoles = function (adminUser) {
       var editAdminUserRolesInstance = $uibModal.open({
         animation: $scope.animationsEnabled,
-        templateUrl: 'views/editadminuserroles.html',
+        templateUrl: '../../../views/adminUsers/editadminuserroles.html',
         controller: 'EditadminuserrolesCtrl',
         size: 'lg',
         resolve: {

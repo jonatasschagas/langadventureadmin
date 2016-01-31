@@ -19,6 +19,7 @@ angular
     'facebook',
     'ui-notification',
     'ui.bootstrap',
+    'ui.tree',
     'checklist-model'
   ])
   .config(function ($routeProvider, FacebookProvider, NotificationProvider) {
@@ -35,16 +36,21 @@ angular
         controllerAs: 'authentication'
       })
       .when('/AdminUserManagement', {
-        templateUrl: 'views/adminusermanagement.html',
+        templateUrl: 'views/adminUsers/adminusermanagement.html',
         controller: 'AdminusermanagementCtrl',
         controllerAs: 'AdminUserManagement',
-        activeTab: 'Users',
-        role: 'superadmin'
+        activeTab: 'Users'
       })
       .when('/Unauthorized', {
         templateUrl: 'views/unauthorized.html',
         controller: 'UnauthorizedCtrl',
         controllerAs: 'Unauthorized'
+      })
+      .when('/DialogsManagement', {
+        templateUrl: 'views/dialogs/dialogsmanagement.html',
+        controller: 'DialogsDialogsmanagementCtrl',
+        controllerAs: 'dialogs/DialogsManagement',
+        activeTab: 'Dialogs'
       })
       .otherwise({
         redirectTo: '/'
