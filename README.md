@@ -10,3 +10,13 @@ Run `grunt` for building and `grunt serve` for preview.
 ## Testing
 
 Running `grunt test` will run the unit tests with karma.
+
+## To create routes/controllers/services/directives
+
+Utilize yeoman generators:
+
+Ex:
+`yo angular:route AdminUserManagement`
+
+Generators can be found here:
+  [https://github.com/yeoman/generator-angular](https://github.com/yeoman/generator-angular)

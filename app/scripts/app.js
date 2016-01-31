@@ -36,6 +36,11 @@ angular
         controller: 'AuthenticationCtrl',
         controllerAs: 'authentication'
       })
+      .when('/AdminUserManagement', {
+        templateUrl: 'views/adminusermanagement.html',
+        controller: 'AdminusermanagementCtrl',
+        controllerAs: 'AdminUserManagement'
+      })
       .otherwise({
         redirectTo: '/authentication'
       });

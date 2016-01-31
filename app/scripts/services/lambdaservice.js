@@ -38,11 +38,11 @@ angular.module('frontendApp')
             callback({'success': false, 'message': 'Unable to execute lambda function: ' + functionName});
           } else {
             try {
-              var resData = JSON.parse(responseData.Payload).data;
+              var resData = JSON.parse(responseData.Payload);
               callback({
-                'success': true,
-                'message': 'Lambda function ' + functionName + ' executed successfully.',
-                'data': resData
+                'success': resData.success,
+                'message': resData.message,
+                'data': resData.data
               });
             } catch (err) {
               console.log(err, err.stack); // an error occurred

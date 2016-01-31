@@ -13,8 +13,8 @@ angular.module('frontendApp')
       restrict: 'A',
       scope: {user: '='},
       replace: true,
-      controller: ['$scope', '$filter', function ($scope, $filter) {
-        // Your behaviour goes here :)
+      controller: ['$scope', '$filter', function ($scope, $filter, AdminUserService) {
+
       }]
     };
   });

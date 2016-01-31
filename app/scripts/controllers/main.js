@@ -8,14 +8,12 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('MainCtrl', function (Notification, ClientVersionService) {
+  .controller('MainCtrl', function ($scope, Notification, AuthenticationService, AdminUserService) {
 
-    ClientVersionService.listClientVersions(function (response) {
-      if (response.success) {
-        Notification.success(response.data.Items[0].alias);
-      } else {
-        Notification.error(response.message);
-      }
+    var userInfo = AuthenticationService.getUserInfo();
+    $scope.userName = userInfo.userName;
+    AdminUserService.getRoles(userInfo.fbUserId, function(response) {
+      $scope.userRoles = response.data.userRoles;
     });
 
   });

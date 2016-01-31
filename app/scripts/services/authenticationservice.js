@@ -26,7 +26,7 @@ angular.module('frontendApp')
           Facebook.api('/me', function (response) {
             var globals = {
               currentUser: {
-                username: response.name,
+                userName: response.name,
                 fbToken: accessToken,
                 fbUserId: userId
               }

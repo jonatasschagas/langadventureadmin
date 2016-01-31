@@ -1,5 +1,14 @@
 <div class="jumbotron">
 
+  <div ng-show="userRoles.length > 0">
+    <p>Hello {{userName}}! You are assigned to the following role(s):
+      <br/><span ng-repeat="role in userRoles"> - {{role}}</span>
+    </p>
+  </div>
+  <div ng-show="userRoles.length == 0">
+    <p>Hello {{userName}}! You have not been assigned to any role. Please contact the administrator in order to be
+      assigned to one or more roles. The roles define which actions can be executed in the system.</p>
+  </div>
 
 
 </div>
