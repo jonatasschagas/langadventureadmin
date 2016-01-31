@@ -1,6 +1,29 @@
-<div class="jumbotron">
+<div class="container">
 
-  <div id="grid1" ui-grid="{data: adminUsers}" class="grid"></div>
+  <h3>Admin Users</h3>
+  <hr/>
 
-
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Roles</th>
+      <th>Last Logged In</th>
+      <th>Modify Roles</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="adminUser in adminUsers">
+      <td>{{adminUser.UserName}}</td>
+      <td>
+        <span ng-repeat="role in adminUser.UserRoles">{{role}},</span>
+      </td>
+      <td>{{adminUser.LastLogin}}</td>
+      <td>
+        <button type="button" class="btn btn-primary btn-sm">Edit Roles</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
+

@@ -8,12 +8,10 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('MainCtrl', function ($scope, Notification, AuthenticationService, AdminUserService) {
+  .controller('MainCtrl', function ($scope, Notification, AuthenticationHolderService) {
 
-    var userInfo = AuthenticationService.getUserInfo();
+    var userInfo = AuthenticationHolderService.getUserInfo();
     $scope.userName = userInfo.userName;
-    AdminUserService.getRoles(userInfo.fbUserId, function(response) {
-      $scope.userRoles = response.data.userRoles;
-    });
+    $scope.userRoles = userInfo.userRoles;
 
   });

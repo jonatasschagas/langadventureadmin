@@ -17,19 +17,16 @@ angular
     'ngSanitize',
     'ngTouch',
     'facebook',
-    'ui-notification'
+    'ui-notification',
+    'ui.bootstrap'
   ])
   .config(function ($routeProvider, FacebookProvider, NotificationProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
-        controllerAs: 'main'
-      })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
+        controllerAs: 'main',
+        activeTab: 'Home'
       })
       .when('/authentication', {
         templateUrl: 'views/authentication.html',
@@ -39,10 +36,17 @@ angular
       .when('/AdminUserManagement', {
         templateUrl: 'views/adminusermanagement.html',
         controller: 'AdminusermanagementCtrl',
-        controllerAs: 'AdminUserManagement'
+        controllerAs: 'AdminUserManagement',
+        activeTab: 'Users',
+        role: 'superadmin'
+      })
+      .when('/Unauthorized', {
+        templateUrl: 'views/unauthorized.html',
+        controller: 'UnauthorizedCtrl',
+        controllerAs: 'Unauthorized'
       })
       .otherwise({
-        redirectTo: '/authentication'
+        redirectTo: '/'
       });
 
     // configuring Facebook
@@ -60,24 +64,24 @@ angular
     });
 
   })
-  .run(function ($rootScope, $location, AuthenticationService) {
+  .run(function ($rootScope, $location, $route, AuthenticationService) {
+
+    var newPage = $location.path();
 
     // redirects to the authentication if user is not
     // authenticated
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
       // redirect to login page if not logged in and trying to access a restricted page
-      var restrictedPage = $.inArray($location.path(), ['/authentication']) === -1;
-      AuthenticationService.verifyAuthentication(function (isAuthenticated) {
-        if (restrictedPage && !isAuthenticated) {
-          $location.path('/authentication');
-        } else {
-          var userInfo = AuthenticationService.getUserInfo();
-          if (userInfo) {
-            // assigning user object for the header
-            $rootScope.userInfo = userInfo;
+      var restrictedPage = $.inArray(newPage, ['/authentication']) === -1;
+      if (restrictedPage) {
+        AuthenticationService.verifyAuthentication(function (isAuthenticated) {
+          if (!isAuthenticated) {
+            $location.path('/authentication');
+          } else {
+            $rootScope.$broadcast('userLoggedIn');
           }
-        }
-      });
+        });
+      }
     });
 
   });

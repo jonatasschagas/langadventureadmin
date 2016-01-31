@@ -13,26 +13,48 @@
  * Service in the frontendApp.
  */
 angular.module('frontendApp')
-  .service('AuthenticationService', function ($cookieStore, $rootScope, Facebook) {
+  .service('AuthenticationService', function ($rootScope, Facebook, LambdaService, AuthenticationHolderService) {
 
     var self = this;
 
-    // logins against Facebook API and stores the response in a cookie
+    /**
+     * logins against Facebook API and stores the response in a cookie
+     * @param callback
+     */
     this.login = function (callback) {
+      // step 1: authenticate with Facebook
       Facebook.login(function (response) {
         if (response.authResponse) { // logged in
-          var accessToken = response.authResponse.accessToken;
-          var userId = response.authResponse.userID;
+          var fbAccessToken = response.authResponse.accessToken;
+          var fbUserId = response.authResponse.userID;
+          // step 2: get user's name from Facebook
           Facebook.api('/me', function (response) {
-            var globals = {
-              currentUser: {
-                userName: response.name,
-                fbToken: accessToken,
-                fbUserId: userId
-              }
-            };
-            $cookieStore.put('globals', globals);
-            callback({'success': true, 'message': 'Good to see you, ' + response.name + '.'});
+            if (response && response.name) {
+              var userName = response.name;
+              // step 3: establishes authentication, so we can call the
+              // lambda function to register the user
+              AuthenticationHolderService.isAuthenticatedToCognito(fbAccessToken, function (isAuthenticated) {
+                if (isAuthenticated) {
+                  // step 4: register in the backend that the user has logged in and
+                  // fetch his roles.
+                  self.registerAccess(fbUserId, userName, function (response) {
+                    if (response.success) {
+                      // step 4: write all the information to cookies
+                      var userRoles = response.data.userRoles;
+                      // stores the user information
+                      AuthenticationHolderService.saveUserInfo(fbUserId, fbAccessToken, userName, userRoles);
+                      callback({'success': true, 'message': 'Good to see you, ' + userName + '.'});
+                    } else {
+                      callback({'success': false, 'message': 'There was a problem logging you in. Try again.'});
+                    }
+                  });
+                } else {
+                  callback({'success': false, 'message': 'There was a problem logging you in. Try again.'});
+                }
+              });
+            } else {
+              callback({'success': false, 'message': 'There was a problem logging you in. Try again.'});
+            }
           });
         } else {
           callback({'success': false, 'message': 'There was a problem logging you in. Try again.'});
@@ -40,54 +62,55 @@ angular.module('frontendApp')
       });
     };
 
-    // returns the information from the user stored in the cookies
-    this.getUserInfo = function () {
-      var globals = $cookieStore.get('globals');
-      return globals && globals.currentUser ? globals.currentUser : false;
+    /**
+     * this method logically belongs to the AdminUserService, but in order to avoid circular dependency,
+     * I decided to keep it here
+     * @param fbUserId
+     * @param userName
+     * @param callback
+     */
+    this.registerAccess = function (fbUserId, userName, callback) {
+      LambdaService.callLambda(
+        'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-register:development',
+        {'fbUserId': fbUserId, 'userName': userName},
+        function (response) {
+          if (response.success) {
+            callback({
+              'success': true,
+              'message': 'Admin user ' + userName + ' has been registered successfully.',
+              'data': response.data
+            });
+          } else {
+            callback({
+              'success': false,
+              'message': 'Unable to register user ' + userName + '.'
+            });
+          }
+        }
+      )
     };
 
-    // controls the state whether the user is authenticated or not
-    this.isAuthenticated = false;
-
-    // checks if the user is authenticated or not
+    /**
+     * checks if the user is authenticated or not
+     * @param callback
+     */
     this.verifyAuthentication = function (callback) {
-
-      if (self.isAuthenticated) {
+      if (AuthenticationHolderService.isAuthenticated()) {
         callback(true);
         return;
       }
-
       // checking if the cookies are there...
-      var userInfo = self.getUserInfo();
+      var userInfo = AuthenticationHolderService.getUserInfo();
       if (!userInfo) {
         callback(false);
         return;
       }
 
-      // authenticating against cognito
-      AWS.config.update({
-        region: 'us-east-1',
-        credentials: new AWS.CognitoIdentityCredentials({
-          AccountId: '117472117844',
-          RoleArn: 'arn:aws:iam::117472117844:role/Cognito_langadventureAuth_Role',
-          IdentityPoolId: 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175',
-          Logins: {
-            'graph.facebook.com': userInfo.fbToken
-          }
-        })
+      // checks if we're authenticated against cognito
+      AuthenticationHolderService.isAuthenticatedToCognito(userInfo.fbToken, function (isAuthenticated) {
+        callback(isAuthenticated);
       });
 
-      // getting credentials
-      AWS.config.credentials.get(function (err) {
-        if (!err) {
-          self.isAuthenticated = true;
-          callback(true);
-        } else {
-          self.isAuthenticated = false;
-          callback(false);
-        }
-      });
     };
-
 
   });

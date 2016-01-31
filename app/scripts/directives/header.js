@@ -11,10 +11,24 @@ angular.module('frontendApp')
     return {
       templateUrl: '/views/header.html',
       restrict: 'A',
-      scope: {user: '='},
       replace: true,
-      controller: ['$scope', '$filter', function ($scope, $filter, AdminUserService) {
+      controller: ['$scope', '$rootScope', '$location', '$route', 'AuthenticationHolderService',
+        function ($scope, $rootScope, $location, $route, AuthenticationHolderService) {
 
-      }]
+          $scope.$route = $route;
+
+          $rootScope.$on('userLoggedIn', function () {
+            $scope.user = AuthenticationHolderService.getUserInfo();
+            $scope.isLoggedIn = $scope.user && $scope.user.fbUserId;
+          });
+
+          $scope.logout = function () {
+            AuthenticationHolderService.logout();
+            $scope.user = null;
+            $scope.isLoggedIn = false;
+            $location.path('/');
+          };
+
+        }]
     };
   });

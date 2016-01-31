@@ -22,7 +22,7 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div header user="userInfo"></div>
+    <div header></div>
 
     <div class="container">
     <div ng-view=""></div>
@@ -60,6 +60,7 @@
     <script src="bower_components/angular-facebook/lib/angular-facebook.js"></script>
     <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
     <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -73,6 +74,8 @@
         <script src="scripts/directives/header.js"></script>
         <script src="scripts/services/adminuserservice.js"></script>
         <script src="scripts/controllers/adminusermanagement.js"></script>
+        <script src="scripts/services/authenticationholderservice.js"></script>
+        <script src="scripts/controllers/unauthorized.js"></script>
         <!-- endbuild -->
 </body>
 </html>
