@@ -1,6 +1,21 @@
+<script type="text/ng-template" id="nodePopOverTemplate.html">
+  <div class="form-group">
+    <label>Text:</label>
+    {{node.title}}
+  </div>
+  <div class="form-group">
+    <label>Translation:</label>
+    {{node.translation}}
+  </div>
+</script>
+
 <!-- Nested node template -->
 <script type="text/ng-template" id="nodes_renderer.html">
   <div ui-tree-handle class="tree-node tree-node-content">
+    <a class="btn btn-info btn-xs" data-nodrag
+       uib-popover-template="templateUrl"
+       popover-trigger="mouseenter"><span
+      class="glyphicon glyphicon-eye-open"></span></a>
     <a class="btn btn-info btn-xs" data-nodrag ng-click="selectNode(node)"><span
       class="glyphicon glyphicon-pencil"></span></a>
     <a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag
@@ -25,12 +40,53 @@
 
 <div class="container">
   <div class="row">
+    <h4>Save/Edit Dialog</h4>
+  </div>
+  <div class="row">
     <form class="form-horizontal" role="form">
       <div class="form-group">
-        <label class="control-label col-sm-2">Dialog Item:</label>
-
+        <label class="control-label col-sm-2">Title:</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" placeholder="Title" ng-model="title">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Story:</label>
+        <div class="col-md-10">
+          <select class="form-control" ng-model="storyId">
+            <option></option>
+            <option ng-repeat="story in stories" value="{{story.id}}">{{story.title}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-md-2">Who starts the dialog?</label>
+        <div class="col-md-10">
+          <select class="form-control" ng-model="whoStarts">
+            <option value="player">Player</option>
+            <option value="npc">Npc</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
         <div class="col-md-12">
+          <button type="button" ng-click="save()" class="btn btn-primary btn-sm pull-right">Save</button>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2">Text:</label>
+        <div class="col-md-10">
           <textarea ng-model="currentText" ng-change="changeNode()" name="currentText" class="form-control"
+                    rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Translation:</label>
+        <div class="col-md-10">
+          <textarea ng-model="currentTranslation" ng-change="changeNode()" name="currentTranslation" class="form-control"
                     rows="3"></textarea>
         </div>
       </div>

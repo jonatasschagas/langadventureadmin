@@ -17,7 +17,7 @@ angular.module('frontendApp')
         function (response) {
           callback(response);
         }
-      )
+      );
     };
 
     this.list = function (callback) {
@@ -27,7 +27,7 @@ angular.module('frontendApp')
         function (response) {
           callback(response);
         }
-      )
+      );
     };
 
     this.updateRoles = function (fbUserId, roles, callback) {
@@ -40,7 +40,7 @@ angular.module('frontendApp')
         function (response) {
           callback(response);
         }
-      )
+      );
     };
 
   });
