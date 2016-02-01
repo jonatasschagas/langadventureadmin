@@ -52,6 +52,16 @@ angular
         controllerAs: 'dialogs/DialogsManagement',
         activeTab: 'Dialogs'
       })
+      .when('/story/StoryManagement', {
+        templateUrl: 'views/story/storymanagement.html',
+        controller: 'StoryStorymanagementCtrl',
+        controllerAs: 'story/StoryManagement'
+      })
+      .when('/story/EditStory', {
+        templateUrl: 'views/story/editstory.html',
+        controller: 'StoryEditstoryCtrl',
+        controllerAs: 'story/EditStory'
+      })
       .otherwise({
         redirectTo: '/'
       });
