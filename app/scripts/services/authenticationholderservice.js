@@ -11,14 +11,14 @@
  * Service in the frontendApp.
  */
 angular.module('frontendApp')
-  .service('AuthenticationHolderService', function ($cookies) {
+  .service('AuthenticationHolderService', ['$cookies', 'lodash', function ($cookies, _) {
 
     /**
      * returns the information from the user stored in the cookies
      */
     this.getUserInfo = function () {
       var globals = $cookies.getObject('globals');
-      return globals && globals.currentUser ? globals.currentUser : false;
+      return !_.isEmpty(globals) && !_.isEmpty(globals.currentUser) ? globals.currentUser : false;
     };
 
     /**
@@ -29,7 +29,7 @@ angular.module('frontendApp')
      * @param userRoles
      */
     this.saveUserInfo = function (fbUserId, fbAccessToken, userName, userRoles) {
-      if (!fbUserId || !fbAccessToken || !userName || !userRoles) {
+      if (_.isEmpty(fbUserId) || _.isEmpty(fbAccessToken) || _.isEmpty(userName) || _.isEmpty(userRoles)) {
         return;
       }
       var globals = {
@@ -64,10 +64,14 @@ angular.module('frontendApp')
     /**
      * Checks if that fbToken is authenticated against Cognito. If Cognito is authenticated, we can execute
      * lambda functions.
-     * @param fbToken
      * @param callback
      */
-    this.isAuthenticatedToCognito = function (fbToken, callback) {
+    this.isAuthenticatedToCognito = function (fbFreshToken) {
+
+      if(_.isEmpty(fbFreshToken)) {
+        fbFreshToken = self.getUserInfo().fbToken;
+      }
+
       AWS.config.update({
         region: 'us-east-1',
         credentials: new AWS.CognitoIdentityCredentials({
@@ -75,31 +79,35 @@ angular.module('frontendApp')
           RoleArn: 'arn:aws:iam::117472117844:role/Cognito_langadventureAuth_Role',
           IdentityPoolId: 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175',
           Logins: {
-            'graph.facebook.com': fbToken
+            'graph.facebook.com': fbFreshToken
           }
         })
       });
 
       // getting credentials
-      AWS.config.credentials.get(function (err) {
-        if (!err) {
-          // sets the user as authenticated
+      return new Promise(function (fulfill, reject) {
+        // getting credentials
+        AWS.config.credentials.get(function (err) {
+          if (!err) {
+            // sets the user as authenticated
+            self.isUserAuhenticated = true;
+            fulfill(true);
+          } else {
+            console.log('Error retrieving AWS credentials.', err);
+            reject();
+          }
+        });
+      }).then(function () {
           self.isUserAuhenticated = true;
-          callback(true);
-        } else {
-          callback(false);
-        }
-      });
+          return Promise.resolve(true);
+        })
+        .catch(function (err) {
+          return Promise.reject(err);
+        });
     };
 
     this.userHasRole = function (role) {
-      var userRoles = self.getUserInfo().userRoles;
-      for (var idx in userRoles) {
-        if (userRoles[idx] == role) {
-          return true;
-        }
-      }
-      return false;
+      return _.filter(self.getUserInfo().userRoles, function(r) { return r == role }).length > 0;
     };
 
-  });
+  }]);

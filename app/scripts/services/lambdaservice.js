@@ -19,24 +19,19 @@ angular.module('frontendApp')
      * checks if the user is authorized to execute lambda functions. If yes, then executes the function
      * @param functionName
      * @param functionParameters
-     * @param callback
      */
-    this.callLambda = function (functionName, functionParameters, callback) {
+    this.callLambda = function (functionName, functionParameters) {
       if (AuthenticationHolderService.isAuthenticated()) {
-        self.invokeLambda(functionName, functionParameters, callback);
+        return self.invokeLambda(functionName, functionParameters);
       } else {
-        AuthenticationHolderService.isAuthenticatedToCognito(AuthenticationHolderService.getUserInfo().fbToken,
-        function(isAuthenticated){
-          if(isAuthenticated) {
-            self.invokeLambda(functionName, functionParameters, callback);
-          } else {
-            console.log('Not executing lambda function: ' + functionName + '. User is not authenticated');
-            callback({
-              'success': false,
-              'message': 'Not authenticated to Cognito. Unable to call the lambda function: ' + functionName
-            });
-          }
-        });
+        return AuthenticationHolderService.isAuthenticatedToCognito()
+          .then(function (isAuthenticated) {
+            if (isAuthenticated) {
+              return self.invokeLambda(functionName, functionParameters);
+            } else {
+              return Promise.reject('User is not authenticated.');
+            }
+          });
       }
     };
 
@@ -44,9 +39,8 @@ angular.module('frontendApp')
      * simply invokes the lambda function
      * @param functionName
      * @param functionParameters
-     * @param callback
      */
-    this.invokeLambda = function (functionName, functionParameters, callback) {
+    this.invokeLambda = function (functionName, functionParameters) {
       var lambda = new AWS.Lambda({
         credentials: AWS.config.credentials,
         region: 'us-east-1',
@@ -57,29 +51,16 @@ angular.module('frontendApp')
         Payload: JSON.stringify(functionParameters),
         InvocationType: 'RequestResponse'
       };
-      lambda.invoke(params, function (err, responseData) {
-        if (err) {
-          console.log(err, err.stack); // an error occurred
-          callback({'success': false, 'message': 'Unable to execute lambda function: ' + functionName});
-        } else {
-          try {
-            var resData = JSON.parse(responseData.Payload);
-            callback({
-              'success': resData.success,
-              'message': resData.message,
-              'data': resData.data
-            });
-          } catch (err) {
-            console.log(err, err.stack); // an error occurred
-            callback({
-              'success': false,
-              'message': 'Unable to process response from the server.',
-              'data': responseData.Payload
-            });
+      return new Promise(function (fulfill, reject) {
+        lambda.invoke(params, function (err, responseData) {
+          if (err) {
+            console.error('Error executing lambda function.', err);
+            reject(err);
+          } else {
+            fulfill(JSON.parse(responseData.Payload));
           }
-        }
+        });
       });
     };
-
   })
 ;

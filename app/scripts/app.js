@@ -20,7 +20,8 @@ angular
     'ui-notification',
     'ui.bootstrap',
     'ui.tree',
-    'checklist-model'
+    'checklist-model',
+    'ngLodash'
   ])
   .config(function ($routeProvider, FacebookProvider, NotificationProvider) {
     $routeProvider
@@ -37,7 +38,7 @@ angular
       })
       .when('/AdminUserManagement', {
         templateUrl: 'views/adminUsers/adminusermanagement.html',
-        controller: 'AdminusermanagementCtrl',
+        controller: 'AdminUserManagementCtrl',
         controllerAs: 'AdminUserManagement',
         activeTab: 'Users'
       })
@@ -48,19 +49,24 @@ angular
       })
       .when('/DialogsManagement', {
         templateUrl: 'views/dialogs/dialogsmanagement.html',
-        controller: 'DialogsDialogsmanagementCtrl',
+        controller: 'DialogsDialogsManagementCtrl',
         controllerAs: 'dialogs/DialogsManagement',
         activeTab: 'Dialogs'
       })
       .when('/story/StoryManagement', {
         templateUrl: 'views/story/storymanagement.html',
-        controller: 'StoryStorymanagementCtrl',
+        controller: 'StoryStoryManagementCtrl',
         controllerAs: 'story/StoryManagement'
       })
       .when('/story/EditStory', {
         templateUrl: 'views/story/editstory.html',
-        controller: 'StoryEditstoryCtrl',
+        controller: 'StoryEditStoryCtrl',
         controllerAs: 'story/EditStory'
+      })
+      .when('/DialogsManagement', {
+        templateUrl: 'views/dialogs/dialogsmanagement.html',
+        controller: 'DialogsManagementCtrl',
+        controllerAs: 'DialogsManagement'
       })
       .otherwise({
         redirectTo: '/'
@@ -91,13 +97,14 @@ angular
       // redirect to login page if not logged in and trying to access a restricted page
       var restrictedPage = $.inArray(newPage, ['/authentication']) === -1;
       if (restrictedPage) {
-        AuthenticationService.verifyAuthentication(function (isAuthenticated) {
-          if (!isAuthenticated) {
-            $location.path('/authentication');
-          } else {
-            $rootScope.$broadcast('userLoggedIn');
-          }
-        });
+        AuthenticationService.verifyAuthentication().
+          then(function (isAuthenticated) {
+            if (!isAuthenticated) {
+              $location.path('/authentication');
+            } else {
+              $rootScope.$broadcast('userLoggedIn');
+            }
+          });
       }
     });
 

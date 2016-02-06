@@ -9,9 +9,4 @@
  */
 angular.module('frontendApp')
   .controller('UnauthorizedCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
   });

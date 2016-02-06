@@ -8,9 +8,9 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('DialogsDialogsmanagementCtrl', function ($scope, $location, Notification, DialogsService) {
+  .controller('DialogsManagementCtrl', function ($scope, $location, Notification, DialogsService) {
 
-    $scope.templateUrl = "nodePopOverTemplate.html";
+    $scope.templateUrl = "showNodesContentsTemplate.html";
 
     $scope.stories = [
       {'id': 1, 'title': 'LangAdventure: Learn Finnish'},
@@ -35,22 +35,22 @@ angular.module('frontendApp')
       scope.toggle();
     };
 
-    $scope.selectNode = function(node) {
+    $scope.selectNode = function (node) {
       $scope.currentText = node.title;
       $scope.currentTranslation = node.translation;
       $scope.currentNode = node;
     };
 
-    $scope.changeNode = function() {
-      if($scope.currentNode) {
+    $scope.changeNode = function () {
+      if ($scope.currentNode) {
         $scope.currentNode.title = $scope.currentText;
         $scope.currentNode.translation = $scope.currentTranslation;
       }
     };
 
-    $scope.cutSize = function(title) {
-      if(title && title.length > 50) {
-        return title.substring(0,50) + '...';
+    $scope.cutSize = function (title) {
+      if (title && title.length > 50) {
+        return title.substring(0, 50) + '...';
       } else {
         return title;
       }
@@ -72,26 +72,25 @@ angular.module('frontendApp')
       $scope.selectNode(nodeData.nodes[newIdx]);
     };
 
-    $scope.showNode = function() {
+    $scope.showNode = function () {
 
     };
 
-    $scope.save = function() {
+    $scope.save = function () {
       DialogsService.save(
         $scope.id,
         $scope.title,
         $scope.storyId,
         $scope.whoStarts,
-        $scope.data,
-        function (response) {
-          if(response.success) {
-            Notification.success('Dialog saved/updated successfully!');
-            $location.path('/DialogsManagement');
-          } else {
-            Notification.error(response.message);
-          }
-        }
-      );
+        $scope.data
+      )
+        .then(function () {
+          Notification.success('Dialog saved/updated successfully!');
+          $location.path('/DialogsManagement');
+        })
+        .catch(function (err) {
+          Notification.error('Unable to save dialog.', err);
+        });
     };
 
   });

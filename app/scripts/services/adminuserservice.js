@@ -10,35 +10,19 @@
 angular.module('frontendApp')
   .service('AdminUserService', function (LambdaService) {
 
-    this.getRoles = function (fbUserId, callback) {
-      LambdaService.callLambda(
-        'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-get_roles:development',
-        {'fbUserId': fbUserId},
-        function (response) {
-          callback(response);
-        }
-      );
-    };
-
-    this.list = function (callback) {
-      LambdaService.callLambda(
+    this.list = function () {
+      return LambdaService.callLambda(
         'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-list:development',
-        {},
-        function (response) {
-          callback(response);
-        }
+        {}
       );
     };
 
     this.updateRoles = function (fbUserId, roles, callback) {
-      LambdaService.callLambda(
+      return LambdaService.callLambda(
         'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-update_roles:development',
         {
           'fbUserId': fbUserId,
           'roles': roles
-        },
-        function (response) {
-          callback(response);
         }
       );
     };

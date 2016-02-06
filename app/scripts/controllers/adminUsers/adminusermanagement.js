@@ -8,7 +8,7 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('AdminusermanagementCtrl',
+  .controller('AdminUserManagementCtrl',
   function ($scope, $location, $uibModal, Notification, AuthenticationHolderService, AdminUserService) {
 
     if (!AuthenticationHolderService.userHasRole('admin')) {
@@ -16,22 +16,19 @@ angular.module('frontendApp')
     }
 
     $scope.reload = function () {
-      AdminUserService.list(function (response) {
-        if (response.success) {
+      AdminUserService.list().
+        then(function (response) {
           $scope.adminUsers = [];
-          for (var idx in response.data.items) {
-            var item = response.data.items[idx];
-            $scope.adminUsers.push(item);
-          }
+          $scope.adminUsers.push.apply($scope.adminUsers, response.data.items);
           // forcing angular to re-draw the screen
           // this happens because the changes to the scope are
           // done outside the angular digest loop. The changes are
           // happening in the Lambda callbacks from AWS SDK
           $scope.$apply();
-        } else {
+        })
+        .catch(function (err) {
           Notification.error('Unable to list the users.');
-        }
-      });
+        });
     };
 
     $scope.reload();
@@ -40,7 +37,7 @@ angular.module('frontendApp')
       var editAdminUserRolesInstance = $uibModal.open({
         animation: true,
         templateUrl: '../../../views/adminUsers/editadminuserroles.html',
-        controller: 'EditadminuserrolesCtrl',
+        controller: 'EditAdminUserRolesCtrl',
         size: 'lg',
         resolve: {
           adminUser: function () {
