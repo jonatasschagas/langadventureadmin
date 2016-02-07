@@ -16,7 +16,9 @@ Running `grunt test` will run the unit tests with karma.
 Utilize yeoman generators:
 
 Ex:
-`yo angular:route AdminUserManagement`
+``
+  yo angular:route AdminUserManagement
+``
 
 Generators can be found here:
   [https://github.com/yeoman/generator-angular](https://github.com/yeoman/generator-angular)

@@ -8,7 +8,19 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('EditAdminUserRolesCtrl', function ($scope, $uibModalInstance, Notification, AdminUserService, adminUser) {
+  .controller('EditAdminUserRolesCtrl',
+  [
+    '$scope',
+    '$uibModalInstance',
+    'Notification',
+    'AdminUserService',
+    'adminUser',
+    function (
+    $scope,
+    $uibModalInstance,
+    Notification,
+    AdminUserService,
+    adminUser) {
 
     $scope.availableRoles = ['admin', 'writer', 'player support', 'game designer'];
     $scope.adminUser = adminUser;
@@ -24,4 +36,4 @@ angular.module('frontendApp')
         });
     };
 
-  });
+  }]);

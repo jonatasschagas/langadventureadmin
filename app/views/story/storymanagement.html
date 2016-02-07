@@ -1,1 +1,32 @@
-<p>This is the story/StoryManagement view.</p>
+<div class="container">
+
+  <h3>Stories</h3>
+
+  <button type="button" ng-click="edit(null)" class="btn btn-primary btn-sm pull-right">Create Story</button>
+  <br/>
+  <hr/>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Target Language</th>
+      <th>Translated Language</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="story in stories">
+      <td>{{story.Title}}</td>
+      <td>{{story.TargetLanguage}}</td>
+      <td>{{story.TranslatedLanguage}}</td>
+      <td>
+        <button type="button" ng-click="edit(story)" class="btn btn-primary btn-sm">Edit Story</button>
+      </td>
+      <td>
+        <button type="button" ng-click="delete(story)" class="btn btn-primary btn-sm btn-danger"
+                confirm="Are you sure you want to delete: {{story.Title}}?">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

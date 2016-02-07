@@ -93,17 +93,14 @@ angular.module('frontendApp')
             self.isUserAuhenticated = true;
             fulfill(true);
           } else {
-            console.log('Error retrieving AWS credentials.', err);
-            reject();
+            console.error('Error retrieving AWS credentials.', err);
+            reject(err);
           }
         });
       }).then(function () {
           self.isUserAuhenticated = true;
           return Promise.resolve(true);
         })
-        .catch(function (err) {
-          return Promise.reject(err);
-        });
     };
 
     this.userHasRole = function (role) {

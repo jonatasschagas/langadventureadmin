@@ -2,95 +2,68 @@
 
 /**
  * @ngdoc function
- * @name frontendApp.controller:DialogsDialogsmanagementCtrl
+ * @name frontendApp.controller:StoryStorymanagementCtrl
  * @description
- * # DialogsDialogsmanagementCtrl
+ * # StoryStorymanagementCtrl
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('DialogsManagementCtrl', function ($scope, $location, Notification, DialogsService) {
+  .controller('DialogsManagementCtrl', [
+    '$scope',
+    '$location',
+    '$uibModal',
+    'AuthenticationHolderService',
+    'StoryService',
+    'DialogsService',
+    'Notification',
+    'lodash',
+    function (
+      $scope,
+      $location,
+      $uibModal,
+      AuthenticationHolderService,
+      StoryService,
+      DialogsService,
+      Notification,
+      _) {
 
-    $scope.templateUrl = "showNodesContentsTemplate.html";
-
-    $scope.stories = [
-      {'id': 1, 'title': 'LangAdventure: Learn Finnish'},
-      {'id': 2, 'title': 'LangAdventure: Learn Spanish'}
-    ];
-
-    $scope.data = [{
-      title: 'This is the first node...',
-      translation: 'This is the first translation...',
-      nodes: []
-    }];
-
-    $scope.currentText = $scope.data[0].title;
-    $scope.currentTranslation = $scope.data[0].translation;
-    $scope.currentNode = $scope.data[0];
-
-    $scope.remove = function (scope) {
-      scope.remove();
-    };
-
-    $scope.toggle = function (scope) {
-      scope.toggle();
-    };
-
-    $scope.selectNode = function (node) {
-      $scope.currentText = node.title;
-      $scope.currentTranslation = node.translation;
-      $scope.currentNode = node;
-    };
-
-    $scope.changeNode = function () {
-      if ($scope.currentNode) {
-        $scope.currentNode.title = $scope.currentText;
-        $scope.currentNode.translation = $scope.currentTranslation;
+      if (!AuthenticationHolderService.userHasRole('writer') && !AuthenticationHolderService.userHasRole('admin')) {
+        $location.path('/Unauthorized');
       }
-    };
 
-    $scope.cutSize = function (title) {
-      if (title && title.length > 50) {
-        return title.substring(0, 50) + '...';
-      } else {
-        return title;
-      }
-    };
-
-    $scope.moveLastToTheBeginning = function () {
-      var a = $scope.data.pop();
-      $scope.data.splice(0, 0, a);
-    };
-
-    $scope.newSubItem = function (scope) {
-      var nodeData = scope.$modelValue;
-      var newIdx = nodeData.nodes.length;
-      nodeData.nodes.push({
-        'title': '',
-        'translation': '',
-        'nodes': []
-      });
-      $scope.selectNode(nodeData.nodes[newIdx]);
-    };
-
-    $scope.showNode = function () {
-
-    };
-
-    $scope.save = function () {
-      DialogsService.save(
-        $scope.id,
-        $scope.title,
-        $scope.storyId,
-        $scope.whoStarts,
-        $scope.data
-      )
-        .then(function () {
-          Notification.success('Dialog saved/updated successfully!');
-          $location.path('/DialogsManagement');
-        })
-        .catch(function (err) {
-          Notification.error('Unable to save dialog.', err);
+      StoryService.list()
+        .then(function (response) {
+          $scope.stories = response.data.items;
+          $scope.$apply();
         });
-    };
 
-  });
+      $scope.reload = function () {
+        DialogsService.list($scope.selectedStory)
+          .then(function (response) {
+            $scope.dialogs = [];
+            $scope.dialogs.push.apply($scope.dialogs, response.data.items);
+            // forcing angular to re-draw the screen
+            // this happens because the changes to the scope are
+            // done outside the angular digest loop. The changes are
+            // happening in the Lambda callbacks from AWS SDK
+            $scope.$apply();
+          })
+          .catch(function (err) {
+            Notification.error('Unable to list the dialogs.', err);
+          });
+      };
+      $scope.reload();
+
+      $scope.delete = function (dialog) {
+        console.log('Deleting dialog ID: ' + dialog.ID);
+        DialogsService.delete(dialog.ID)
+          .then(function () {
+            Notification.success('Dialog has been deleted successfully.');
+            $scope.reload();
+          })
+          .catch(function (err) {
+            Notification.error('Unable to delete dialog.', err);
+          });
+      };
+
+    }]);

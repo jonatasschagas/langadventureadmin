@@ -21,7 +21,8 @@ angular
     'ui.bootstrap',
     'ui.tree',
     'checklist-model',
-    'ngLodash'
+    'ngLodash',
+    'angular-confirm'
   ])
   .config(function ($routeProvider, FacebookProvider, NotificationProvider) {
     $routeProvider
@@ -36,7 +37,7 @@ angular
         controller: 'AuthenticationCtrl',
         controllerAs: 'authentication'
       })
-      .when('/AdminUserManagement', {
+      .when('/adminUsers/AdminUserManagement', {
         templateUrl: 'views/adminUsers/adminusermanagement.html',
         controller: 'AdminUserManagementCtrl',
         controllerAs: 'AdminUserManagement',
@@ -47,26 +48,34 @@ angular
         controller: 'UnauthorizedCtrl',
         controllerAs: 'Unauthorized'
       })
-      .when('/DialogsManagement', {
-        templateUrl: 'views/dialogs/dialogsmanagement.html',
-        controller: 'DialogsDialogsManagementCtrl',
-        controllerAs: 'dialogs/DialogsManagement',
-        activeTab: 'Dialogs'
-      })
       .when('/story/StoryManagement', {
         templateUrl: 'views/story/storymanagement.html',
         controller: 'StoryStoryManagementCtrl',
-        controllerAs: 'story/StoryManagement'
+        controllerAs: 'story/StoryManagement',
+        activeTab: 'Stories'
       })
       .when('/story/EditStory', {
         templateUrl: 'views/story/editstory.html',
         controller: 'StoryEditStoryCtrl',
         controllerAs: 'story/EditStory'
       })
-      .when('/DialogsManagement', {
+      .when('/dialogs/DialogsManagement', {
         templateUrl: 'views/dialogs/dialogsmanagement.html',
         controller: 'DialogsManagementCtrl',
-        controllerAs: 'DialogsManagement'
+        controllerAs: 'dialogs/DialogsManagement',
+        activeTab: 'Dialogs'
+      })
+      .when('/dialogs/CreateDialog', {
+        templateUrl: 'views/dialogs/editdialogs.html',
+        controller: 'EditDialogsCtrl',
+        controllerAs: 'dialogs/editDialogs',
+        activeTab: 'Dialogs'
+      })
+      .when('/dialogs/EditDialogs/:dialogId', {
+        templateUrl: 'views/dialogs/editdialogs.html',
+        controller: 'EditDialogsCtrl',
+        controllerAs: 'dialogs/editDialogs',
+        activeTab: 'Dialogs'
       })
       .otherwise({
         redirectTo: '/'
@@ -97,13 +106,16 @@ angular
       // redirect to login page if not logged in and trying to access a restricted page
       var restrictedPage = $.inArray(newPage, ['/authentication']) === -1;
       if (restrictedPage) {
-        AuthenticationService.verifyAuthentication().
-          then(function (isAuthenticated) {
+        AuthenticationService.verifyAuthentication()
+          .then(function (isAuthenticated) {
             if (!isAuthenticated) {
               $location.path('/authentication');
             } else {
               $rootScope.$broadcast('userLoggedIn');
             }
+          })
+          .catch(function (err){
+            $location.path('/authentication');
           });
       }
     });

@@ -9,7 +9,20 @@
  */
 angular.module('frontendApp')
   .controller('AdminUserManagementCtrl',
-  function ($scope, $location, $uibModal, Notification, AuthenticationHolderService, AdminUserService) {
+  [
+    '$scope',
+    '$location',
+    '$uibModal',
+    'Notification',
+    'AuthenticationHolderService',
+    'AdminUserService',
+    function (
+      $scope,
+      $location,
+      $uibModal,
+      Notification,
+      AuthenticationHolderService,
+      AdminUserService) {
 
     if (!AuthenticationHolderService.userHasRole('admin')) {
       $location.path('/Unauthorized');
@@ -53,4 +66,4 @@ angular.module('frontendApp')
       });
     };
 
-  });
+  }]);

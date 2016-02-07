@@ -1,114 +1,46 @@
-<script type="text/ng-template" id="showNodesContentsTemplate.html">
-  <div class="form-group">
-    <label>Text:</label>
-    {{node.title}}
-  </div>
-  <div class="form-group">
-    <label>Translation:</label>
-    {{node.translation}}
-  </div>
-</script>
-
-<!-- Nested node template -->
-<script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle class="tree-node tree-node-content">
-    <a class="btn btn-info btn-xs" data-nodrag
-       uib-popover-template="templateUrl"
-       popover-trigger="mouseenter"><span
-      class="glyphicon glyphicon-eye-open"></span></a>
-    <a class="btn btn-info btn-xs" data-nodrag ng-click="selectNode(node)"><span
-      class="glyphicon glyphicon-pencil"></span></a>
-    <a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag
-       ng-click="toggle(this)"><span
-      class="glyphicon"
-      ng-class="{
-          'glyphicon-chevron-right': collapsed,
-          'glyphicon-chevron-down': !collapsed
-        }"></span></a>
-    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span
-      class="glyphicon glyphicon-remove"></span></a>
-    <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)"
-       style="margin-right: 8px;"><span
-      class="glyphicon glyphicon-plus"></span></a>
-    {{cutSize(node.title)}}
-  </div>
-  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
-    </li>
-  </ol>
-</script>
-
 <div class="container">
-  <div class="row">
-    <h4>Save/Edit Dialog</h4>
-  </div>
-  <div class="row">
-    <form class="form-horizontal" role="form">
-      <div class="form-group">
-        <label class="control-label col-sm-2">Title:</label>
-        <div class="col-md-10">
-          <input type="text" class="form-control" placeholder="Title" ng-model="title">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2">Story:</label>
-        <div class="col-md-10">
-          <select class="form-control" ng-model="storyId">
-            <option></option>
-            <option ng-repeat="story in stories" value="{{story.id}}">{{story.title}}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-md-2">Who starts the dialog?</label>
-        <div class="col-md-10">
-          <select class="form-control" ng-model="whoStarts">
-            <option value="player">Player</option>
-            <option value="npc">Npc</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-md-12">
-          <button type="button" ng-click="save()" class="btn btn-primary btn-sm pull-right">Save</button>
-        </div>
-      </div>
 
-      <hr/>
+  <h3>Dialogs</h3>
 
-      <div class="form-group">
-        <label class="control-label col-sm-2">Text:</label>
-        <div class="col-md-10">
-          <textarea ng-model="currentText" ng-change="changeNode()" name="currentText" class="form-control"
-                    rows="3"></textarea>
-        </div>
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="control-label col-sm-2">Story:</label>
+      <div class="col-sm-4">
+        <select class="form-control pull-left" ng-model="selectedStory" ng-change="reload()">
+          <option></option>
+          <option ng-repeat="story in stories" value="{{story.ID}}">{{story.Title}}</option>
+        </select>
       </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2">Translation:</label>
-        <div class="col-md-10">
-          <textarea ng-model="currentTranslation" ng-change="changeNode()" name="currentTranslation" class="form-control"
-                    rows="3"></textarea>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <div ui-tree id="tree-root">
-        <ol ui-tree-nodes ng-model="data">
-          <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-        </ol>
+      <div class="col-sm-4">
+        <a type="button" href="#/dialogs/CreateDialog" class="btn btn-primary btn-sm pull-right">Create Dialog</a>
       </div>
     </div>
+  </form>
 
-    <!--<div class="col-sm-6">
-      <div class="info">
-        {{info}}
-      </div>
-      <pre class="code">{{ data | json }}</pre>
-    </div>-->
-
-  </div>
+  <br/>
+  <hr/>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Who Starts the Dialog</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="dialog in dialogs">
+      <td>{{dialog.Title}}</td>
+      <td>{{dialog.WhoStarts}}</td>
+      <td>
+        <a type="button" href="#/dialogs/EditDialogs/{{dialog.ID}}" class="btn btn-primary btn-sm">Edit Dialog</a>
+      </td>
+      <td>
+        <button type="button" ng-click="delete(dialog)" class="btn btn-primary btn-sm btn-danger"
+                confirm="Are you sure you want to delete: {{dialog.Title}}?">Delete
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
-

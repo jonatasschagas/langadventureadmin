@@ -1,7 +1,9 @@
 <h4>Hello {{userName}}!</h4>
 <div ng-show="userRoles.length > 0">
   <p>You are assigned to the following role(s):
-    <br/><span ng-repeat="role in userRoles"> - {{role}}</span>
+  <ul>
+    <li ng-repeat="role in userRoles">{{role}}</li>
+  </ul>
   </p>
 </div>
 <div ng-show="userRoles.length == 0">

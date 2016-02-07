@@ -8,20 +8,32 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('StoryStoryManagementCtrl', [
-    '$scope', '$location', '$uibModal', 'AuthenticationHolderService', 'StoryService', 'Notification', 'lodash',
-    function ($scope, $location, $uibModal, AuthenticationHolderService, StoryService, Notification, _) {
+  .controller('StoryStoryManagementCtrl',
+  [
+    '$scope',
+    '$location',
+    '$uibModal',
+    'AuthenticationHolderService',
+    'StoryService',
+    'Notification',
+    'lodash',
+    function ($scope,
+              $location,
+              $uibModal,
+              AuthenticationHolderService,
+              StoryService,
+              Notification,
+              _) {
 
       if (!AuthenticationHolderService.userHasRole('writer') && !AuthenticationHolderService.userHasRole('admin')) {
         $location.path('/Unauthorized');
       }
 
-      $scope.stories = [];
-
       $scope.reload = function () {
         StoryService.list()
           .then(function (response) {
-            $scope.stories.concat(response.data.items);
+            $scope.stories = [];
+            $scope.stories.push.apply($scope.stories, response.data.items);
             // forcing angular to re-draw the screen
             // this happens because the changes to the scope are
             // done outside the angular digest loop. The changes are
@@ -35,7 +47,7 @@ angular.module('frontendApp')
 
       $scope.reload();
 
-      $scope.editStories = function (story) {
+      $scope.edit = function (story) {
         var editStoriesInstance = $uibModal.open({
           animation: true,
           templateUrl: '../../../views/story/editstory.html',
@@ -56,8 +68,9 @@ angular.module('frontendApp')
       };
 
       $scope.delete = function (story) {
+        console.log('Deleting story ID: ' + story.ID);
         StoryService.delete(story.ID)
-          .then(function (response) {
+          .then(function () {
             Notification.success('Story has been deleted successfully.');
             $scope.reload();
           })

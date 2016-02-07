@@ -19,7 +19,12 @@ angular.module('frontendApp')
     'LambdaService',
     'AuthenticationHolderService',
     'lodash',
-    function ($rootScope, Facebook, LambdaService, AuthenticationHolderService, _) {
+    function (
+      $rootScope,
+      Facebook,
+      LambdaService,
+      AuthenticationHolderService,
+      _) {
 
       var self = this;
 

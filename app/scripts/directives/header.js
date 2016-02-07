@@ -12,8 +12,19 @@ angular.module('frontendApp')
       templateUrl: '/views/header.html',
       restrict: 'A',
       replace: true,
-      controller: ['$scope', '$rootScope', '$location', '$route', 'AuthenticationHolderService',
-        function ($scope, $rootScope, $location, $route, AuthenticationHolderService) {
+      controller:
+        [
+          '$scope',
+          '$rootScope',
+          '$location',
+          '$route',
+          'AuthenticationHolderService',
+        function (
+          $scope,
+          $rootScope,
+          $location,
+          $route,
+          AuthenticationHolderService) {
 
           $scope.$route = $route;
 
