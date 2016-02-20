@@ -24,100 +24,114 @@ angular
     'ngLodash',
     'angular-confirm'
   ])
-  .config(function ($routeProvider, FacebookProvider, NotificationProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main',
-        activeTab: 'Home'
-      })
-      .when('/authentication', {
-        templateUrl: 'views/authentication.html',
-        controller: 'AuthenticationCtrl',
-        controllerAs: 'authentication'
-      })
-      .when('/adminUsers/AdminUserManagement', {
-        templateUrl: 'views/adminUsers/adminusermanagement.html',
-        controller: 'AdminUserManagementCtrl',
-        controllerAs: 'AdminUserManagement',
-        activeTab: 'Users'
-      })
-      .when('/Unauthorized', {
-        templateUrl: 'views/unauthorized.html',
-        controller: 'UnauthorizedCtrl',
-        controllerAs: 'Unauthorized'
-      })
-      .when('/story/StoryManagement', {
-        templateUrl: 'views/story/storymanagement.html',
-        controller: 'StoryStoryManagementCtrl',
-        controllerAs: 'story/StoryManagement',
-        activeTab: 'Stories'
-      })
-      .when('/story/EditStory', {
-        templateUrl: 'views/story/editstory.html',
-        controller: 'StoryEditStoryCtrl',
-        controllerAs: 'story/EditStory'
-      })
-      .when('/dialogs/DialogsManagement', {
-        templateUrl: 'views/dialogs/dialogsmanagement.html',
-        controller: 'DialogsManagementCtrl',
-        controllerAs: 'dialogs/DialogsManagement',
-        activeTab: 'Dialogs'
-      })
-      .when('/dialogs/CreateDialog', {
-        templateUrl: 'views/dialogs/editdialogs.html',
-        controller: 'EditDialogsCtrl',
-        controllerAs: 'dialogs/editDialogs',
-        activeTab: 'Dialogs'
-      })
-      .when('/dialogs/EditDialogs/:dialogId', {
-        templateUrl: 'views/dialogs/editdialogs.html',
-        controller: 'EditDialogsCtrl',
-        controllerAs: 'dialogs/editDialogs',
-        activeTab: 'Dialogs'
-      })
-      .otherwise({
-        redirectTo: '/'
+  .config([
+    '$routeProvider',
+    'FacebookProvider',
+    'NotificationProvider',
+    function ($routeProvider,
+              FacebookProvider,
+              NotificationProvider) {
+      $routeProvider
+        .when('/', {
+          templateUrl: 'views/main.html',
+          controller: 'MainCtrl',
+          controllerAs: 'main',
+          activeTab: 'Home'
+        })
+        .when('/authentication', {
+          templateUrl: 'views/authentication.html',
+          controller: 'AuthenticationCtrl',
+          controllerAs: 'authentication'
+        })
+        .when('/adminUsers/AdminUserManagement', {
+          templateUrl: 'views/adminUsers/adminusermanagement.html',
+          controller: 'AdminUserManagementCtrl',
+          controllerAs: 'AdminUserManagement',
+          activeTab: 'Users'
+        })
+        .when('/Unauthorized', {
+          templateUrl: 'views/unauthorized.html',
+          controller: 'UnauthorizedCtrl',
+          controllerAs: 'Unauthorized'
+        })
+        .when('/story/StoryManagement', {
+          templateUrl: 'views/story/storymanagement.html',
+          controller: 'StoryStoryManagementCtrl',
+          controllerAs: 'story/StoryManagement',
+          activeTab: 'Stories'
+        })
+        .when('/story/EditStory', {
+          templateUrl: 'views/story/editstory.html',
+          controller: 'StoryEditStoryCtrl',
+          controllerAs: 'story/EditStory'
+        })
+        .when('/dialogs/DialogsManagement', {
+          templateUrl: 'views/dialogs/dialogsmanagement.html',
+          controller: 'DialogsManagementCtrl',
+          controllerAs: 'dialogs/DialogsManagement',
+          activeTab: 'Dialogs'
+        })
+        .when('/dialogs/CreateDialog', {
+          templateUrl: 'views/dialogs/editdialogs.html',
+          controller: 'EditDialogsCtrl',
+          controllerAs: 'dialogs/editDialogs',
+          activeTab: 'Dialogs'
+        })
+        .when('/dialogs/EditDialogs/:dialogId', {
+          templateUrl: 'views/dialogs/editdialogs.html',
+          controller: 'EditDialogsCtrl',
+          controllerAs: 'dialogs/editDialogs',
+          activeTab: 'Dialogs'
+        })
+        .otherwise({
+          redirectTo: '/'
+        });
+
+      // configuring Facebook
+      FacebookProvider.init('659183280888234');
+
+      // configuring the notification
+      NotificationProvider.setOptions({
+        delay: 10000,
+        startTop: 20,
+        startRight: 10,
+        verticalSpacing: 20,
+        horizontalSpacing: 20,
+        positionX: 'left',
+        positionY: 'top'
       });
 
-    // configuring Facebook
-    FacebookProvider.init('659183280888234');
+    }])
+  .run([
+    '$rootScope',
+    '$location',
+    '$route',
+    'AuthenticationService',
+    function ($rootScope,
+              $location,
+              $route,
+              AuthenticationService) {
 
-    // configuring the notification
-    NotificationProvider.setOptions({
-      delay: 10000,
-      startTop: 20,
-      startRight: 10,
-      verticalSpacing: 20,
-      horizontalSpacing: 20,
-      positionX: 'left',
-      positionY: 'top'
-    });
+      var newPage = $location.path();
 
-  })
-  .run(function ($rootScope, $location, $route, AuthenticationService) {
-
-    var newPage = $location.path();
-
-    // redirects to the authentication if user is not
-    // authenticated
-    $rootScope.$on('$locationChangeStart', function (event, next, current) {
-      // redirect to login page if not logged in and trying to access a restricted page
-      var restrictedPage = $.inArray(newPage, ['/authentication']) === -1;
-      if (restrictedPage) {
-        AuthenticationService.verifyAuthentication()
-          .then(function (isAuthenticated) {
-            if (!isAuthenticated) {
+      // redirects to the authentication if user is not
+      // authenticated
+      $rootScope.$on('$locationChangeStart', function (event, next, current) {
+        // redirect to login page if not logged in and trying to access a restricted page
+        var restrictedPage = $.inArray(newPage, ['/authentication']) === -1;
+        if (restrictedPage) {
+          AuthenticationService.verifyAuthentication()
+            .then(function (isAuthenticated) {
+              if (!isAuthenticated) {
+                $location.path('/authentication');
+              } else {
+                $rootScope.$broadcast('userLoggedIn');
+              }
+            })
+            .catch(function (err) {
               $location.path('/authentication');
-            } else {
-              $rootScope.$broadcast('userLoggedIn');
-            }
-          })
-          .catch(function (err){
-            $location.path('/authentication');
-          });
-      }
-    });
+            });
+        }
+      });
 
-  });
+    }]);

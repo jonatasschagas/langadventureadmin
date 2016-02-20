@@ -7,61 +7,72 @@
  * # EditDialogsCtrl
  * Controller of the frontendApp
  */
+
+
+/**
+ * Generates a random UUID
+ * @returns {string}
+ */
+function guid() {
+  var S4 = function () {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  };
+  return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
 angular.module('frontendApp')
   .controller('EditDialogsCtrl',
-  ['$scope',
-    '$location',
-    '$routeParams',
+  [
+    '$scope',
+    '$uibModal',
     'lodash',
-    'Notification',
-    'StoryService',
-    'DialogsService',
-    function ($scope, $location, $routeParams, _, Notification, StoryService, DialogsService) {
+    function ($scope, $uibModal, _) {
 
       $scope.templateUrl = "showNodesContentsTemplate.html";
 
-      $scope.dialogId = $routeParams.dialogId;
-      if (!_.isEmpty($scope.dialogId)) {
-        DialogsService.get($scope.dialogId)
-          .then(function (response) {
-            $scope.title = response.data.Item.Title;
-            $scope.storyId = response.data.Item.StoryId;
-            $scope.whoStarts = response.data.Item.WhoStarts;
-            $scope.data = response.data.Item.Nodes;
-            $scope.id = response.data.Item.ID;
-            console.log('Dialog has been loaded.');
-            $scope.$apply();
-          });
-      }
+      $scope.npcs = [
+        {Title: "Maria", ID: "XXXXXXX"},
+        {Title: "Peter", ID: "YYYYY"}
+      ];
 
-      $scope.stories = [];
-      StoryService.list().then(function (response) {
-        $scope.stories = response.data.items;
-        $scope.$apply();
-      });
+      $scope.quests = [
+        {Title: "Find the city center", ID: "XXXXXXX"},
+        {Title: "Find you son", ID: "YYYYY"}
+      ];
 
+      $scope.answers = [{
+        "id": "9ceff0b5-ee25-367e-76da-bfe15ef7241e",
+        "text": "Hello there!",
+        "type": "answer"
+      }, {
+        "id": "0a365d28-bd36-8ad5-ed8f-0ad6387cc515",
+        "text": "Why are you calling me a stranger?",
+        "type": "answer"
+      }, {"id": "1fc74d51-f927-c870-7310-cd9b6bdda51d", "text": "Hello!", "type": "answer"}];
+      ;
       $scope.data = [{
-        title: 'This is the first node...',
-        translation: 'This is the first translation...',
-        nodes: []
+        "id": "671fa95d-9922-6734-68dd-73c32fda9d20",
+        "text": "Howdy Stranger!",
+        "type": "question",
+        "answers": [{
+          "id": "9ceff0b5-ee25-367e-76da-bfe15ef7241e",
+          "text": "Hello there!",
+          "type": "answer"
+        }, {
+          "id": "0a365d28-bd36-8ad5-ed8f-0ad6387cc515",
+          "text": "Why are you calling me a stranger?",
+          "type": "answer"
+        }, {"id": "1fc74d51-f927-c870-7310-cd9b6bdda51d", "text": "Hello!", "type": "answer"}]
       }];
-
-      $scope.currentText = $scope.data[0].title;
-      $scope.currentTranslation = $scope.data[0].translation;
-      $scope.currentNode = $scope.data[0];
+      ;
 
       $scope.remove = function (scope) {
         scope.remove();
       };
 
-      $scope.toggle = function (scope) {
-        scope.toggle();
-      };
-
       $scope.selectNode = function (node) {
-        $scope.currentText = node.title;
-        $scope.currentTranslation = node.translation;
-        $scope.currentNode = node;
+        $scope.selectedItem = node;
+        $scope.createQuestionOrStatement();
       };
 
       $scope.changeNode = function () {
@@ -79,41 +90,125 @@ angular.module('frontendApp')
         }
       };
 
-      $scope.moveLastToTheBeginning = function () {
-        var a = $scope.data.pop();
-        $scope.data.splice(0, 0, a);
+      $scope.removeItem = function (node) {
+        removeItem($scope.data[0], node);
       };
 
-      $scope.newSubItem = function (scope) {
-        var nodeData = scope.$modelValue;
-        var newIdx = nodeData.nodes.length;
-        nodeData.nodes.push({
-          'title': '',
-          'translation': '',
-          'nodes': []
+      function removeItem(node, item) {
+        // removing parent item
+        if (node.id == item.id) {
+          node = null;
+        }
+        if (!$scope.data) {
+          $scope.data = [];
+          $scope.answers = [];
+        }
+      }
+
+      $scope.createQuestionOrStatement = function () {
+
+        var questionOrStatementInstance = $uibModal.open({
+          animation: true,
+          templateUrl: '../../../views/dialogs/editdialogitem.html',
+          controller: 'EditDialogItemCtrl',
+          size: 'lg',
+          resolve: {
+            answers: function () {
+              return $scope.answers;
+            },
+            item: function () {
+              return $scope.selectedItem;
+            }
+          }
         });
-        $scope.selectNode(nodeData.nodes[newIdx]);
+
+        questionOrStatementInstance.result.then(function (result) {
+          $scope.answers = [].concat($scope.answers, result.answers);
+
+          function appendItem(node, item) {
+            if (node.answers == null) {
+              return;
+            }
+            for (var i = 0; i < node.answers.length; i++) {
+              var currAnswer = node.answers[i];
+              if (currAnswer.id == item.parent) {
+                currAnswer.next = [item];
+                return;
+              } else if (currAnswer.next) {
+                appendItem(currAnswer.next[0], item);
+              }
+            }
+          }
+
+          if ($scope.data) {
+            removeItem($scope.data[0], result);
+            appendItem($scope.data[0], result);
+          } else {
+            $scope.data = [result];
+          }
+
+          console.log(JSON.stringify($scope.answers));
+          console.log(JSON.stringify($scope.data));
+
+        }, function () {
+        });
       };
 
-      $scope.showNode = function () {
+    }])
+  .controller('EditDialogItemCtrl',
+  [
+    '$scope',
+    '$uibModalInstance',
+    'answers',
+    'item',
+    function ($scope, $uibModalInstance, answers, item) {
 
-      };
+      $scope.answers = answers;
+
+      if (item) {
+        $scope.id = item.id;
+        $scope.parent = item.parent;
+        $scope.text = item.text;
+        $scope.translation = item.translation;
+        $scope.answer1Id = item.answers[0].id;
+        $scope.answer1Text = item.answers[0].text;
+        $scope.answer1Translation = item.answers[0].translation;
+        $scope.answer2Id = item.answers[1].id;
+        $scope.answer2Text = item.answers[1].text;
+        $scope.answer2Translation = item.answers[1].translation;
+        $scope.answer3Id = item.answers[2].id;
+        $scope.answer3Text = item.answers[2].text;
+        $scope.answer3Translation = item.answers[2].translation;
+      }
 
       $scope.save = function () {
-        DialogsService.save(
-          $scope.id,
-          $scope.title,
-          $scope.storyId,
-          $scope.whoStarts,
-          $scope.data
-        )
-          .then(function () {
-            Notification.success('Dialog saved/updated successfully!');
-            $location.path('/dialogs/DialogsManagement');
-          })
-          .catch(function (err) {
-            Notification.error('Unable to save dialog.', err);
-          });
+        $uibModalInstance.close({
+          id: $scope.id ? $scope.id : guid(),
+          parent: $scope.parent,
+          text: $scope.text,
+          translation: $scope.translation,
+          type: "question",
+          answers: [
+            {
+              id: $scope.answer1Id ? $scope.answer1Id : guid(),
+              text: $scope.answer1Text,
+              translation: $scope.answer1Translation,
+              type: "answer"
+            },
+            {
+              id: $scope.answer1Id ? $scope.answer1Id : guid(),
+              text: $scope.answer2Text,
+              translation: $scope.answer2Translation,
+              type: "answer"
+            },
+            {
+              id: $scope.answer1Id ? $scope.answer1Id : guid(),
+              text: $scope.answer3Text,
+              translation: $scope.answer3Translation,
+              type: "answer"
+            }
+          ]
+        });
       };
 
     }]);

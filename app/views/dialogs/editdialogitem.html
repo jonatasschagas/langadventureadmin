@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="row">
+    <h4>Question/Statement</h4>
+  </div>
+  <div class="row">
+    <form class="form-horizontal" role="form">
+
+      <div class="form-group">
+        <label class="control-label col-sm-2">Parent:</label>
+        <div class="col-md-10">
+          <select class="form-control" ng-model="parent">
+            <option></option>
+            <option ng-repeat="answer in answers" value="{{answer.text}}">{{answer.text}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2">Text:</label>
+        <div class="col-md-10">
+          <textarea ng-model="text"  name="text" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Translation:</label>
+        <div class="col-md-10">
+          <textarea ng-model="translation" name="translation" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+
+      <hr/>
+
+      <h4>Answer 1:</h4>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Text:</label>
+        <div class="col-md-10">
+          <input type="text" ng-model="answer1Text" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Translation:</label>
+        <div class="col-md-10">
+          <input type="text" ng-model="answer1Translation" class="form-control" />
+        </div>
+      </div>
+
+      <hr/>
+
+      <h4>Answer 2:</h4>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Text:</label>
+        <div class="col-md-10">
+          <input type="text" ng-model="answer2Text" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Translation:</label>
+        <div class="col-md-10">
+          <input type="text" ng-model="answer2Translation" class="form-control" />
+        </div>
+      </div>
+
+      <hr/>
+
+      <h4>Answer 3:</h4>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Text:</label>
+        <div class="col-md-10">
+          <input type="text" ng-model="answer3Text" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Translation:</label>
+        <div class="col-md-10">
+          <input type="text" ng-model="answer3Translation" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-12">
+          <button type="button" ng-click="save()" class="btn btn-primary btn-sm pull-right">Save</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+

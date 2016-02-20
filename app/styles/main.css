@@ -147,10 +147,16 @@ tr.angular-ui-tree-empty {
 
 
 /* --- Tree --- */
-.tree-node {
-  border: 1px solid #dae2ea;
+.tree-node-question {
+  border: 1px solid #bdd0ea;
   background: #f8faff;
-  color: #7c9eb2;
+  color: #647fb2;
+}
+
+.tree-node-answer {
+  border: 1px solid #488864;
+  background: #77e180;
+  color: #004a1a;
 }
 
 .nodrop {

@@ -17,13 +17,7 @@ angular.module('frontendApp')
     'StoryService',
     'Notification',
     'lodash',
-    function ($scope,
-              $location,
-              $uibModal,
-              AuthenticationHolderService,
-              StoryService,
-              Notification,
-              _) {
+    function ($scope, $location, $uibModal, AuthenticationHolderService, StoryService, Notification, _) {
 
       if (!AuthenticationHolderService.userHasRole('writer') && !AuthenticationHolderService.userHasRole('admin')) {
         $location.path('/Unauthorized');
