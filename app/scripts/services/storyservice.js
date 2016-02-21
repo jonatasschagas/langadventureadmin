@@ -13,22 +13,17 @@ angular.module('frontendApp')
     function (LambdaService) {
 
       this.delete = function (id) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-story-delete:development',
-          {'id': id}
+        return LambdaService.callLambda('story-delete', {'id': id}
         );
       };
 
       this.list = function () {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-story-list:development',
-          {}
+        return LambdaService.callLambda('story-list', {}
         );
       };
 
       this.save = function (id, title, targetLanguage, translatedLanguage) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-story-save:development',
+        return LambdaService.callLambda('story-save',
           {
             'id': id,
             'title': title,

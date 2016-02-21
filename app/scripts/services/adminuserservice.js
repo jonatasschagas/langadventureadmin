@@ -14,15 +14,11 @@ angular.module('frontendApp')
     function (LambdaService) {
 
       this.list = function () {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-list:development',
-          {}
-        );
+        return LambdaService.callLambda('admin_user-list', {});
       };
 
-      this.updateRoles = function (fbUserId, roles, callback) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-update_roles:development',
+      this.updateRoles = function (fbUserId, roles) {
+        return LambdaService.callLambda('admin_user-update_roles',
           {
             'fbUserId': fbUserId,
             'roles': roles

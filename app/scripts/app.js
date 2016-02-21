@@ -102,6 +102,14 @@ angular
       });
 
     }])
+  .constant('CONFIG', {
+    'lambdaArn': 'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-',
+    'lambdaEnv': 'development',
+    'awsAccountId': '117472117844',
+    'awsRegion': 'us-east-1',
+    'cognitoRole': 'arn:aws:iam::117472117844:role/Cognito_langadventureAuth_Role',
+    'cognitoIdentityPoolId': 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175'
+  })
   .run([
     '$rootScope',
     '$location',

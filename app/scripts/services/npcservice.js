@@ -4,7 +4,7 @@
  * @ngdoc service
  * @name frontendApp.NPCService
  * @description
- * # StoryService
+ * # NPCService
  * Service in the frontendApp.
  */
 angular.module('frontendApp')
@@ -13,22 +13,15 @@ angular.module('frontendApp')
     function (LambdaService) {
 
       this.delete = function (id) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-story-delete:development',
-          {'id': id}
-        );
+        return LambdaService.callLambda('npc-delete', {'id': id});
       };
 
       this.list = function () {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-story-list:development',
-          {}
-        );
+        return LambdaService.callLambda('npc-list',{});
       };
 
       this.save = function (id, names, description) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-npc-save:development',
+        return LambdaService.callLambda('npc-save',
           {
             'id': id,
             'names': names,

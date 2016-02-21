@@ -112,7 +112,7 @@ angular.module('frontendApp')
        */
       this.registerAccess = function (fbUserId, userName) {
         return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-admin_user-register:development',
+          'admin_user-register',
           {'fbUserId': fbUserId, 'userName': userName});
       };
 

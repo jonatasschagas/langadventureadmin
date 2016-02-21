@@ -16,45 +16,29 @@ angular.module('frontendApp')
     'LambdaService',
     function (LambdaService) {
 
-      this.save = function (id, title, storyId, whoStarts, nodes) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-dialog-save:development',
+      this.save = function (id, npcId, questId, questionCompletion, nodes) {
+        return LambdaService.callLambda('dialog-save',
           {
             'id': id,
-            'title': title,
-            'storyId': storyId,
-            'whoStarts': whoStarts,
+            'npcId': npcId,
+            'questId': questId,
+            'questionCompletion': questionCompletion,
             'nodes': nodes
           }
         );
       };
 
       this.get = function (dialogId) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-dialog-get:development',
-          {
-            'dialogId': dialogId
-          }
-        );
+        return LambdaService.callLambda('dialog-get', {'dialogId': dialogId});
       };
 
-      this.list = function (storyId) {
-        console.log('Loading dialogs from story Id: ' + storyId);
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-dialog-list:development',
-          {
-            'storyId': storyId
-          }
-        );
+      this.list = function (questId) {
+        console.log('Loading dialogs from quest Id: ' + questId);
+        return LambdaService.callLambda('dialog-list', { 'questId': questId});
       };
 
       this.delete = function (id) {
-        return LambdaService.callLambda(
-          'arn:aws:lambda:us-east-1:117472117844:function:langadventurebackend-nodejsbackend-dialog-delete:development',
-          {
-            'id': id
-          }
-        );
+        return LambdaService.callLambda('dialog-delete', {'id': id});
       };
 
     }]);

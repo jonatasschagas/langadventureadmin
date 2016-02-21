@@ -11,7 +11,8 @@
  * Service in the frontendApp.
  */
 angular.module('frontendApp')
-  .service('AuthenticationHolderService', ['$cookies', 'lodash', function ($cookies, _) {
+  .service('AuthenticationHolderService', ['$cookies', 'lodash', 'CONFIG',
+    function ($cookies, _, CONFIG) {
 
     /**
      * returns the information from the user stored in the cookies
@@ -73,11 +74,11 @@ angular.module('frontendApp')
       }
 
       AWS.config.update({
-        region: 'us-east-1',
+        region: CONFIG.awsRegion,
         credentials: new AWS.CognitoIdentityCredentials({
-          AccountId: '117472117844',
-          RoleArn: 'arn:aws:iam::117472117844:role/Cognito_langadventureAuth_Role',
-          IdentityPoolId: 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175',
+          AccountId: CONFIG.awsAccountId,
+          RoleArn: CONFIG.cognitoRole,
+          IdentityPoolId: CONFIG.cognitoIdentityPoolId,
           Logins: {
             'graph.facebook.com': fbFreshToken
           }

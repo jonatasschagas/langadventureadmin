@@ -14,7 +14,8 @@ angular.module('frontendApp')
   .service('LambdaService',
   [
     'AuthenticationHolderService',
-    function (AuthenticationHolderService) {
+    'CONFIG',
+    function (AuthenticationHolderService, CONFIG) {
 
       var self = this;
 
@@ -24,6 +25,10 @@ angular.module('frontendApp')
        * @param functionParameters
        */
       this.callLambda = function (functionName, functionParameters) {
+
+        // assembling the proper lambda function name based on the configuration
+        functionName = CONFIG.lambdaArn + functionName + ':' + CONFIG.lambdaEnv;
+
         if (AuthenticationHolderService.isAuthenticated()) {
           return self.invokeLambda(functionName, functionParameters);
         } else {
