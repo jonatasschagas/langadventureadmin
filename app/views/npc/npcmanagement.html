@@ -1,0 +1,35 @@
+<div class="container">
+
+  <h3>NPCs</h3>
+
+  <button type="button" ng-click="edit(null)" class="btn btn-primary btn-sm pull-right">Create NPC</button>
+  <br/>
+  <hr/>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Description</th>
+      <th>Names</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="npc in npcs">
+      <td>{{npc.Description}}</td>
+      <td>
+        <ul>
+          <li ng-repeat="name in npc.NpcNames">{{name.name}} - {{name.language}}</li>
+        </ul>
+      </td>
+      <td>
+        <button type="button" ng-click="edit(npc)" class="btn btn-primary btn-sm">Edit</button>
+      </td>
+      <td>
+        <button type="button" ng-click="delete(npc)" class="btn btn-primary btn-sm btn-danger"
+                confirm="Are you sure you want to delete: {{npc.NpcNames[0].name}}?">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -20,11 +20,11 @@ angular.module('frontendApp')
         return LambdaService.callLambda('npc-list',{});
       };
 
-      this.save = function (id, names, description) {
+      this.save = function (id, npcNames, description) {
         return LambdaService.callLambda('npc-save',
           {
             'id': id,
-            'names': names,
+            'npcNames': npcNames,
             'description': description
           }
         );

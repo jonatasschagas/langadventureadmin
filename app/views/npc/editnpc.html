@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+    <h4>Save/Edit Npc</h4>
+  </div>
+  <div class="row">
+    <form class="form-horizontal" role="form" name="npcForm" ng-submit="save(npcForm.$valid)"
+          novalidate>
+      <div class="form-group">
+        <div class="col-md-12">
+          <button type="button" ng-click="addName()"
+                  class="btn btn-primary btn-sm pull-left">Add Name</button>
+        </div>
+      </div>
+      <div  data-ng-repeat="name in npcNames">
+        <div class="form-group">
+          <label class="control-label col-sm-2">Name:</label>
+          <div class="col-md-10">
+            <input type="text" ng-model="name.name" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2">Language:</label>
+          <div class="col-md-10">
+            <select class="form-control" ng-model="name.language">
+              <option></option>
+              <option ng-repeat="language in languages" value="{{language}}">{{language}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <button type="button" ng-click="deleteName($index)"
+                    confirm="Are you sure you want to delete: {{name.name}}?"
+                    class="btn btn-danger btn-sm pull-right">Delete</button>
+          </div>
+        </div>
+        <hr/>
+      </div>
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(npcForm.description)}">
+        <label class="control-label col-sm-2">Description:</label>
+        <div class="col-md-10">
+          <textarea ng-model="description" name="description"
+                    class="form-control" rows="3" required></textarea>
+          <p ng-show="checkErrors(npcForm.description)"
+             class="help-block">Please input a description for the NPC.</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-12">
+          <button type="submit"
+                  ng-disabled="npcForm.$invalid || npcNames.length < 1"
+                  class="btn btn-primary btn-sm pull-right">Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

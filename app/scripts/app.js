@@ -60,16 +60,17 @@ angular
           controllerAs: 'story/StoryManagement',
           activeTab: 'Stories'
         })
-        .when('/story/EditStory', {
-          templateUrl: 'views/story/editstory.html',
-          controller: 'StoryEditStoryCtrl',
-          controllerAs: 'story/EditStory'
-        })
         .when('/quest/QuestManagement', {
           templateUrl: 'views/quest/questmanagement.html',
           controller: 'QuestManagementCtrl',
           controllerAs: 'quest/QuestManagement',
           activeTab: 'Quests'
+        })
+        .when('/npc/NpcManagement', {
+          templateUrl: 'views/npc/npcmanagement.html',
+          controller: 'NpcManagementCtrl',
+          controllerAs: 'npc/NpcManagement',
+          activeTab: 'NPCs'
         })
         .when('/dialogs/DialogsManagement', {
           templateUrl: 'views/dialogs/dialogsmanagement.html',
@@ -114,7 +115,9 @@ angular
     'awsAccountId': '117472117844',
     'awsRegion': 'us-east-1',
     'cognitoRole': 'arn:aws:iam::117472117844:role/Cognito_langadventureAuth_Role',
-    'cognitoIdentityPoolId': 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175'
+    'cognitoIdentityPoolId': 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175',
+    'languages': ['English', 'Spanish', 'Portuguese', 'French',
+      'Finnish', 'Swedish', 'German', 'Russian', 'Japanese', 'Chinese']
   })
   .filter('range', function () {
     return function (input, total) {

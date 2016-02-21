@@ -12,11 +12,13 @@ angular.module('frontendApp')
   [
     '$scope',
     '$uibModalInstance',
+    'CONFIG',
     'Notification',
     'StoryService',
     'story',
     function ($scope,
               $uibModalInstance,
+              CONFIG,
               Notification,
               StoryService,
               story) {
@@ -29,8 +31,7 @@ angular.module('frontendApp')
         $scope.ID = story ? story.ID : null;
       }
 
-      $scope.languages = ['English', 'Spanish', 'Portuguese', 'French',
-        'Finnish', 'Swedish', 'German', 'Russian', 'Japanese', 'Chinese'];
+      $scope.languages = CONFIG.languages;
 
       $scope.save = function () {
         StoryService.save($scope.ID, $scope.title, $scope.targetLanguage, $scope.translatedLanguage)
