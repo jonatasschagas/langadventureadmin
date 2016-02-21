@@ -3,59 +3,87 @@
     <h4>Save/Edit Quest</h4>
   </div>
   <div class="row">
-    <form class="form-horizontal" role="form">
-      <div class="form-group">
+    <form class="form-horizontal" role="form" name="questForm" ng-submit="save(questForm.$valid)"
+          novalidate>
+      <div class="form-group"
+           ng-class="{ 'has-error' : checkErrors(questForm.storyId)}">
         <label class="control-label col-sm-2">Story:</label>
+
         <div class="col-md-10">
-          <select class="form-control" ng-model="storyId">
+          <select class="form-control" name="storyId" ng-model="storyId" required>
             <option></option>
             <option ng-repeat="story in stories" value="{{story.ID}}">{{story.Title}}</option>
           </select>
+
+          <p ng-show="checkErrors(questForm.storyId)"
+             class="help-block">Please select a Story.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.title)}">
         <label class="control-label col-sm-2">Title:</label>
+
         <div class="col-md-10">
-          <input type="text" class="form-control" placeholder="Title" ng-model="title">
+          <input type="text" class="form-control" name="title"
+                 placeholder="Title" ng-model="title" required>
+
+          <p ng-show="checkErrors(questForm.title)"
+             class="help-block">Please enter a title.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.questOrder)}">
         <label class="control-label col-sm-2">Quest Order:</label>
+
         <div class="col-md-10">
-          <select class="form-control" ng-model="questOrder">
+          <select class="form-control" name="questOrder" ng-model="questOrder" required>
             <option></option>
             <option ng-repeat="n in [] | range:100" value="{{n}}">{{n}}</option>
           </select>
+
+          <p ng-show="checkErrors(questForm.questOrder)"
+             class="help-block">Please select the order of the quest.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.introduction)}">
         <label class="control-label col-sm-2">Introduction:</label>
+
         <div class="col-md-10">
-          <textarea ng-model="introduction"  class="form-control" rows="3"></textarea>
+          <textarea ng-model="introduction" name="introduction" class="form-control" rows="3" required></textarea>
+
+          <p ng-show="checkErrors(questForm.introduction)"
+             class="help-block">Please input an introduction to the Quest.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.introductionTranslation)}">
         <label class="control-label col-sm-2">Introduction Translation:</label>
+
         <div class="col-md-10">
-          <textarea ng-model="introductionTranslation" class="form-control" rows="3"></textarea>
+          <textarea ng-model="introductionTranslation" name="introductionTranslation"
+                    class="form-control" rows="3" required></textarea>
+
+          <p ng-show="checkErrors(questForm.introductionTranslation)"
+             class="help-block">Please input the translation of the introduction to the Quest.</p>
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-sm-2">Completion:</label>
+
         <div class="col-md-10">
           <textarea ng-model="completion" class="form-control" rows="3"></textarea>
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-sm-2">Completion Translation:</label>
+
         <div class="col-md-10">
           <textarea ng-model="completionTranslation" class="form-control" rows="3"></textarea>
         </div>
       </div>
       <div class="form-group">
         <div class="col-md-12">
-          <button type="button" ng-click="save()"
-                  class="btn btn-primary btn-sm pull-right">Save</button>
+          <button type="submit"
+                  ng-disabled="questForm.$invalid"
+                  class="btn btn-primary btn-sm pull-right">Save
+          </button>
         </div>
       </div>
     </form>

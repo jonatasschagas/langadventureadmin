@@ -65,7 +65,13 @@ angular.module('frontendApp')
               console.error('Error executing lambda function.', err);
               reject(err);
             } else {
-              fulfill(JSON.parse(responseData.Payload));
+              var response = JSON.parse(responseData.Payload);
+              if(response.hasOwnProperty('errorType')) {
+                console.error(response.errorMessage);
+                reject(new Error(response.errorMessage));
+              } else {
+                fulfill(response);
+              }
             }
           });
         });

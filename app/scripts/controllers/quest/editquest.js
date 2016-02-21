@@ -31,21 +31,30 @@ angular.module('frontendApp')
 
       if (quest != null) {
         $scope.quest = quest;
-        $scope.questOrder = quest.QuestOrder;
+        $scope.questOrder = quest.QuestOrder + "";
         $scope.storyId = quest.StoryId;
         $scope.title = quest.Title;
         $scope.introduction = quest.Introduction;
+        $scope.introductionTranslation = quest.IntroductionTranslation;
         $scope.completion = quest.Completion;
+        $scope.completionTranslation = quest.CompletionTranslation;
         $scope.ID = quest ? quest.ID : null;
       }
 
-      $scope.save = function () {
+      $scope.save = function (isValid) {
+
+        if(!isValid) {
+          return;
+        }
+
         QuestService.save(
           $scope.ID,
           $scope.questOrder,
           $scope.title,
           $scope.introduction,
+          $scope.introductionTranslation,
           $scope.completion,
+          $scope.completionTranslation,
           $scope.storyId)
           .then(function (response) {
             Notification.success(response.message);
@@ -55,6 +64,10 @@ angular.module('frontendApp')
             console.error('Error saving the quest record.', err);
             Notification.error('Error saving the quest record.');
           });
+      };
+
+      $scope.checkErrors = function(formItem) {
+        return formItem.$invalid && !formItem.$pristine
       };
 
     }]);

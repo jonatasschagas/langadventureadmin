@@ -39,6 +39,9 @@ angular.module('frontendApp')
         });
 
       $scope.reload = function () {
+        if(!$scope.selectedStory) {
+          return;
+        }
         QuestService.list($scope.selectedStory)
           .then(function (response) {
             $scope.quests = [];

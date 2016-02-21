@@ -22,14 +22,17 @@ angular.module('frontendApp')
         );
       };
 
-      this.save = function (id, questOrder, title, introduction, completion, storyId) {
+      this.save = function (id, questOrder, title, introduction, introductionTranslation,
+                            completion, completionTranslation, storyId) {
         return LambdaService.callLambda('quest-save',
           {
             'id': id,
             'title': title,
             'questOrder': questOrder,
             'introduction': introduction,
+            'introductionTranslation': introductionTranslation,
             'completion': completion,
+            'completionTranslation': completionTranslation,
             'storyId': storyId
           }
         );
