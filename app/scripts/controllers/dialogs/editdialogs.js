@@ -26,7 +26,8 @@ angular.module('frontendApp')
     '$scope',
     '$uibModal',
     'lodash',
-    function ($scope, $uibModal, _) {
+    'Notification',
+    function ($scope, $uibModal, _, Notification) {
 
       $scope.templateUrl = "showNodesContentsTemplate.html";
 
@@ -40,7 +41,7 @@ angular.module('frontendApp')
         {Title: "Find you son", ID: "YYYYY"}
       ];
 
-      $scope.answers = [{
+      $scope.parentAnswers = [{
         "id": "9ceff0b5-ee25-367e-76da-bfe15ef7241e",
         "text": "Hello there!",
         "type": "answer"
@@ -66,13 +67,9 @@ angular.module('frontendApp')
       }];
       ;
 
-      $scope.remove = function (scope) {
-        scope.remove();
-      };
-
-      $scope.selectNode = function (node) {
+      $scope.editNode = function (node) {
         $scope.selectedItem = node;
-        $scope.createQuestionOrStatement();
+        $scope.editQuestion();
       };
 
       $scope.changeNode = function () {
@@ -90,8 +87,10 @@ angular.module('frontendApp')
         }
       };
 
-      $scope.removeItem = function (node) {
+      $scope.removeItem = function (node, scope) {
         removeItem($scope.data[0], node);
+        $scope.refreshParentAnswers();
+        scope.remove();
       };
 
       function removeItem(node, item) {
@@ -101,32 +100,63 @@ angular.module('frontendApp')
         }
         if (!$scope.data) {
           $scope.data = [];
-          $scope.answers = [];
+          $scope.parentAnswers = [];
         }
       }
 
-      $scope.createQuestionOrStatement = function () {
+      $scope.createQuestion = function () {
+        handleEditQuestionDialog(null);
+      };
 
-        var questionOrStatementInstance = $uibModal.open({
+      $scope.editQuestion = function () {
+        handleEditQuestionDialog($scope.selectedItem);
+      };
+
+      $scope.refreshParentAnswers = function() {
+        function appendAnswers(answers, arrayToAppend) {
+          if (answers == null) {
+            return arrayToAppend;
+          }
+          arrayToAppend = [].concat(arrayToAppend, answers);
+          for (var idx = 0; idx < answers.length; idx++) {
+            var nextQuestion = answers[idx].next;
+            if(nextQuestion && nextQuestion.length > 0 && nextQuestion[0]) {
+              arrayToAppend = appendAnswers(nextQuestion[0].answers, arrayToAppend);
+            }
+          }
+          return arrayToAppend;
+        }
+        // refreshing the array of answers.
+        return appendAnswers($scope.data[0].answers, []);
+      };
+
+      function handleEditQuestionDialog(item) {
+        var questionInstance = $uibModal.open({
           animation: true,
           templateUrl: '../../../views/dialogs/editdialogitem.html',
           controller: 'EditDialogItemCtrl',
           size: 'lg',
           resolve: {
-            answers: function () {
-              return $scope.answers;
+            parentAnswers: function () {
+              return $scope.refreshParentAnswers();
             },
             item: function () {
-              return $scope.selectedItem;
+              return item;
             }
           }
         });
 
-        questionOrStatementInstance.result.then(function (result) {
-          $scope.answers = [].concat($scope.answers, result.answers);
+        questionInstance.result.then(function (result) {
 
-          function appendItem(node, item) {
+          function appendQuestionItem(node, item) {
             if (node.answers == null) {
+              return;
+            }
+            if(node.id == item.id) {
+              node.text = item.text;
+              node.translation = item.translation;
+              node.parent = item.parent;
+              node.answers = item.answers;
               return;
             }
             for (var i = 0; i < node.answers.length; i++) {
@@ -135,80 +165,73 @@ angular.module('frontendApp')
                 currAnswer.next = [item];
                 return;
               } else if (currAnswer.next) {
-                appendItem(currAnswer.next[0], item);
+                appendQuestionItem(currAnswer.next[0], item);
               }
             }
           }
 
+          // appending item to the tree
           if ($scope.data) {
-            removeItem($scope.data[0], result);
-            appendItem($scope.data[0], result);
+            appendQuestionItem($scope.data[0], result);
           } else {
             $scope.data = [result];
           }
 
-          console.log(JSON.stringify($scope.answers));
-          console.log(JSON.stringify($scope.data));
+          $scope.refreshParentAnswers();
+
+          Notification.success("Question/Statement "
+            + result.text + " created/edited successfully.");
 
         }, function () {
         });
-      };
+      }
 
     }])
   .controller('EditDialogItemCtrl',
   [
     '$scope',
     '$uibModalInstance',
-    'answers',
+    'Notification',
+    'parentAnswers',
     'item',
-    function ($scope, $uibModalInstance, answers, item) {
+    function ($scope, $uibModalInstance, Notification, parentAnswers, item) {
 
-      $scope.answers = answers;
+      $scope.parentAnswers = parentAnswers;
+      $scope.answers = [];
 
       if (item) {
         $scope.id = item.id;
         $scope.parent = item.parent;
         $scope.text = item.text;
         $scope.translation = item.translation;
-        $scope.answer1Id = item.answers[0].id;
-        $scope.answer1Text = item.answers[0].text;
-        $scope.answer1Translation = item.answers[0].translation;
-        $scope.answer2Id = item.answers[1].id;
-        $scope.answer2Text = item.answers[1].text;
-        $scope.answer2Translation = item.answers[1].translation;
-        $scope.answer3Id = item.answers[2].id;
-        $scope.answer3Text = item.answers[2].text;
-        $scope.answer3Translation = item.answers[2].translation;
+        $scope.answers = item.answers;
+      } else {
+        $scope.id = null;
+        $scope.parent = null;
+        $scope.text = null;
+        $scope.translation = null;
       }
 
+      $scope.addAnswer = function() {
+        $scope.answers.push({ id: guid(), type: "answer" });
+      };
+
       $scope.save = function () {
+
+        if($scope.answers.length == 0) {
+          Notification.error("Please add at least one Answer.");
+          return;
+        }
+
         $uibModalInstance.close({
           id: $scope.id ? $scope.id : guid(),
           parent: $scope.parent,
           text: $scope.text,
           translation: $scope.translation,
           type: "question",
-          answers: [
-            {
-              id: $scope.answer1Id ? $scope.answer1Id : guid(),
-              text: $scope.answer1Text,
-              translation: $scope.answer1Translation,
-              type: "answer"
-            },
-            {
-              id: $scope.answer1Id ? $scope.answer1Id : guid(),
-              text: $scope.answer2Text,
-              translation: $scope.answer2Translation,
-              type: "answer"
-            },
-            {
-              id: $scope.answer1Id ? $scope.answer1Id : guid(),
-              text: $scope.answer3Text,
-              translation: $scope.answer3Translation,
-              type: "answer"
-            }
-          ]
+          answers: $scope.answers
         });
+
       };
 
     }]);

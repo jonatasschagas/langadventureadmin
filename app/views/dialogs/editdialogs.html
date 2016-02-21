@@ -28,7 +28,7 @@
       <div class="form-group">
         <div class="col-md-12">
           <button type="button" ng-click="save()" class="btn btn-primary btn-sm pull-right">Save</button>
-          <button type="button" ng-click="createQuestionOrStatement()"
+          <button type="button" ng-click="createQuestion()"
                   class="btn btn-primary btn-sm pull-right">Create Question/Statement
           </button>
         </div>
@@ -41,10 +41,12 @@
           <!-- Nested node template -->
           <script type="text/ng-template" id="nodes_renderer.html">
             <div ui-tree-handle ng-if="node.type == 'question'" class="tree-node-question tree-node-content">
-              <a class="btn btn-info btn-xs" data-nodrag ng-click="selectNode(node)"><span
+              <a class="btn btn-info btn-xs" data-nodrag ng-click="editNode(node)"><span
                 class="glyphicon glyphicon-pencil"></span></a>
               {{cutSize(node.text)}}
-              <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span
+              <a class="pull-right btn btn-danger btn-xs" data-nodrag
+                 confirm="Are you sure you want to delete: {{node.text}}?"
+                 ng-click="removeItem(node, this)"><span
                 class="glyphicon glyphicon-remove"></span></a>
             </div>
             <div ui-tree-handle ng-if="node.type == 'answer'" class="tree-node-answer tree-node-content">
