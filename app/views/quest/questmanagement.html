@@ -1,0 +1,47 @@
+<div class="container">
+
+  <h3>Quests</h3>
+
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="control-label col-sm-2">Story:</label>
+      <div class="col-sm-4">
+        <select class="form-control pull-left" ng-model="selectedStory" ng-change="reload()">
+          <option></option>
+          <option ng-repeat="story in stories" value="{{story.ID}}">{{story.Title}}</option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <a type="button" ng-click="edit(null)"
+           class="btn btn-primary btn-sm pull-right">Create Quest</a>
+      </div>
+    </div>
+  </form>
+
+  <br/>
+  <hr/>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Quest Order</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="quest in quests">
+      <td>{{quest.Title}}</td>
+      <td>{{quest.QuestOrder}}</td>
+      <td>
+        <a type="button" ng-click="edit(quest)" class="btn btn-primary btn-sm">Edit Quest</a>
+      </td>
+      <td>
+        <button type="button" ng-click="delete(quest)" class="btn btn-primary btn-sm btn-danger"
+                confirm="Are you sure you want to delete: {{quest.Title}}?">Delete
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

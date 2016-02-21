@@ -65,6 +65,12 @@ angular
           controller: 'StoryEditStoryCtrl',
           controllerAs: 'story/EditStory'
         })
+        .when('/quest/QuestManagement', {
+          templateUrl: 'views/quest/questmanagement.html',
+          controller: 'QuestManagementCtrl',
+          controllerAs: 'quest/QuestManagement',
+          activeTab: 'Quests'
+        })
         .when('/dialogs/DialogsManagement', {
           templateUrl: 'views/dialogs/dialogsmanagement.html',
           controller: 'DialogsManagementCtrl',
@@ -109,6 +115,15 @@ angular
     'awsRegion': 'us-east-1',
     'cognitoRole': 'arn:aws:iam::117472117844:role/Cognito_langadventureAuth_Role',
     'cognitoIdentityPoolId': 'us-east-1:f1f17a72-9537-486b-90a8-29a0098e1175'
+  })
+  .filter('range', function () {
+    return function (input, total) {
+      total = parseInt(total);
+      for (var i = 0; i < total; i++) {
+        input.push(i);
+      }
+      return input;
+    };
   })
   .run([
     '$rootScope',

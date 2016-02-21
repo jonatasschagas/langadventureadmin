@@ -27,6 +27,7 @@ angular.module('frontendApp')
           {
             'id': id,
             'title': title,
+            'questOrder': questOrder,
             'introduction': introduction,
             'completion': completion,
             'storyId': storyId

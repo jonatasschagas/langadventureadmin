@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="row">
+    <h4>Save/Edit Quest</h4>
+  </div>
+  <div class="row">
+    <form class="form-horizontal" role="form">
+      <div class="form-group">
+        <label class="control-label col-sm-2">Story:</label>
+        <div class="col-md-10">
+          <select class="form-control" ng-model="storyId">
+            <option></option>
+            <option ng-repeat="story in stories" value="{{story.ID}}">{{story.Title}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Title:</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" placeholder="Title" ng-model="title">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Quest Order:</label>
+        <div class="col-md-10">
+          <select class="form-control" ng-model="questOrder">
+            <option></option>
+            <option ng-repeat="n in [] | range:100" value="{{n}}">{{n}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Introduction:</label>
+        <div class="col-md-10">
+          <textarea ng-model="introduction"  class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Introduction Translation:</label>
+        <div class="col-md-10">
+          <textarea ng-model="introductionTranslation" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Completion:</label>
+        <div class="col-md-10">
+          <textarea ng-model="completion" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">Completion Translation:</label>
+        <div class="col-md-10">
+          <textarea ng-model="completionTranslation" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-12">
+          <button type="button" ng-click="save()"
+                  class="btn btn-primary btn-sm pull-right">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
