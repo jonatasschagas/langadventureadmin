@@ -16,13 +16,13 @@ angular.module('frontendApp')
     'LambdaService',
     function (LambdaService) {
 
-      this.save = function (id, npcId, questId, questionCompletion, nodes) {
+      this.save = function (id, npcId, questId, questCompletion, nodes) {
         return LambdaService.callLambda('dialog-save',
           {
             'id': id,
             'npcId': npcId,
             'questId': questId,
-            'questionCompletion': questionCompletion,
+            'questCompletion': questCompletion,
             'nodes': nodes
           }
         );

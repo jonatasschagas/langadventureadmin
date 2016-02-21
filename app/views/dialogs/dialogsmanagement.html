@@ -4,11 +4,11 @@
 
   <form class="form-horizontal" role="form">
     <div class="form-group">
-      <label class="control-label col-sm-2">Story:</label>
+      <label class="control-label col-sm-2">Quest:</label>
       <div class="col-sm-4">
-        <select class="form-control pull-left" ng-model="selectedStory" ng-change="reload()">
+        <select class="form-control pull-left" ng-model="selectedQuest" ng-change="reload()">
           <option></option>
-          <option ng-repeat="story in stories" value="{{story.ID}}">{{story.Title}}</option>
+          <option ng-repeat="quest in quests" value="{{quest.ID}}">{{quest.Title}}</option>
         </select>
       </div>
       <div class="col-sm-4">
@@ -22,16 +22,14 @@
   <table class="table">
     <thead>
     <tr>
-      <th>Title</th>
-      <th>Who Starts the Dialog</th>
+      <th>Dialog</th>
       <th></th>
       <th></th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="dialog in dialogs">
-      <td>{{dialog.Title}}</td>
-      <td>{{dialog.WhoStarts}}</td>
+      <td>{{dialog.Nodes[0].text}}</td>
       <td>
         <a type="button" href="#/dialogs/EditDialogs/{{dialog.ID}}" class="btn btn-primary btn-sm">Edit Dialog</a>
       </td>

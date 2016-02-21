@@ -13,45 +13,63 @@ angular.module('frontendApp')
   [
     '$scope',
     '$uibModal',
+    '$routeParams',
+    '$location',
     'lodash',
+    'NPCService',
+    'QuestService',
+    'DialogsService',
     'Notification',
-    function ($scope, $uibModal, _, Notification) {
+    function ($scope, $uibModal, $routeParams, $location, _, NPCService, QuestService, DialogsService, Notification) {
 
-      $scope.npcs = [
-        {Title: "Maria", ID: "XXXXXXX"},
-        {Title: "Peter", ID: "YYYYY"}
-      ];
+      $scope.npcs = [];
+      NPCService.list()
+        .then(function (response) {
+          $scope.npcs = response.data.items;
+          $scope.$apply();
+        });
 
-      $scope.quests = [
-        {Title: "Find the city center", ID: "XXXXXXX"},
-        {Title: "Find you son", ID: "YYYYY"}
-      ];
+      $scope.quests = [];
+      QuestService.list()
+        .then(function (response) {
+          $scope.quests = response.data.items;
+          $scope.$apply();
+        });
 
-      $scope.parentAnswers = [{
-        "id": "9ceff0b5-ee25-367e-76da-bfe15ef7241e",
-        "text": "Hello there!",
-        "type": "answer"
-      }, {
-        "id": "0a365d28-bd36-8ad5-ed8f-0ad6387cc515",
-        "text": "Why are you calling me a stranger?",
-        "type": "answer"
-      }, {"id": "1fc74d51-f927-c870-7310-cd9b6bdda51d", "text": "Hello!", "type": "answer"}];
-      ;
-      $scope.data = [{
-        "id": "671fa95d-9922-6734-68dd-73c32fda9d20",
-        "text": "Howdy Stranger!",
-        "type": "question",
-        "answers": [{
-          "id": "9ceff0b5-ee25-367e-76da-bfe15ef7241e",
-          "text": "Hello there!",
-          "type": "answer"
-        }, {
-          "id": "0a365d28-bd36-8ad5-ed8f-0ad6387cc515",
-          "text": "Why are you calling me a stranger?",
-          "type": "answer"
-        }, {"id": "1fc74d51-f927-c870-7310-cd9b6bdda51d", "text": "Hello!", "type": "answer"}]
-      }];
-      ;
+      $scope.data = null;
+      if ($routeParams.dialogId) {
+        DialogsService.get($routeParams.dialogId)
+          .then(function (response) {
+            $scope.id = response.data.Item.ID;
+            $scope.npcId = response.data.Item.NpcId;
+            $scope.questId = response.data.Item.QuestId;
+            $scope.questCompletion = response.data.Item.QuestCompletion;
+            $scope.data = response.data.Item.Nodes;
+            $scope.$apply();
+          });
+      }
+
+      $scope.save = function (isValid) {
+
+        if(!isValid) {
+          return;
+        }
+
+        DialogsService.save(
+          $scope.id,
+          $scope.npcId,
+          $scope.questId,
+          $scope.questCompletion,
+          $scope.data)
+          .then(function (response) {
+            Notification.success(response.message);
+            $location.path('/dialogs/DialogsManagement');
+          })
+          .catch(function (err) {
+            console.error('Error saving the dialog record.', err);
+            Notification.error('Error saving the dialog record.');
+          });
+      };
 
       // triggers the edit question modal
       $scope.editItem = function (node) {
@@ -83,7 +101,6 @@ angular.module('frontendApp')
             $scope.parentAnswers = [];
           }
         }
-
       };
 
       // opens the edit question dialog
@@ -92,7 +109,7 @@ angular.module('frontendApp')
       };
 
       // returns an array with the answers from the dialog tree
-      $scope.getParentAnswers = function() {
+      $scope.getParentAnswers = function () {
         function appendAnswers(answers, arrayToAppend) {
           if (answers == null) {
             return arrayToAppend;
@@ -100,13 +117,21 @@ angular.module('frontendApp')
           arrayToAppend = [].concat(arrayToAppend, answers);
           for (var idx = 0; idx < answers.length; idx++) {
             var nextQuestion = answers[idx].next;
-            if(nextQuestion && nextQuestion.length > 0 && nextQuestion[0]) {
+            if (nextQuestion && nextQuestion.length > 0 && nextQuestion[0]) {
               arrayToAppend = appendAnswers(nextQuestion[0].answers, arrayToAppend);
             }
           }
           return arrayToAppend;
         }
-        return appendAnswers($scope.data[0].answers, []);
+        if($scope.data) {
+          return appendAnswers($scope.data[0].answers, []);
+        } else {
+          return [];
+        }
+      };
+
+      $scope.checkErrors = function(formItem) {
+        return formItem.$invalid && !formItem.$pristine
       };
 
       // handles the modal that is used to create/edit the dialog items
@@ -132,7 +157,7 @@ angular.module('frontendApp')
             if (node.answers == null) {
               return;
             }
-            if(node.id == item.id) {
+            if (node.id == item.id) {
               node.text = item.text;
               node.translation = item.translation;
               node.parent = item.parent;
@@ -201,20 +226,15 @@ angular.module('frontendApp')
         return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
       }
 
-      $scope.addAnswer = function() {
-        $scope.answers.push({ id: guid(), type: "answer" });
+      $scope.addAnswer = function () {
+        $scope.answers.push({id: guid(), type: "answer"});
       };
 
-      $scope.deleteAnswer = function(answerIdx) {
+      $scope.deleteAnswer = function (answerIdx) {
         $scope.answers.splice(answerIdx, 1);
       };
 
       $scope.save = function () {
-
-        if($scope.answers.length == 0) {
-          Notification.error("Please add at least one Answer.");
-          return;
-        }
 
         $uibModalInstance.close({
           id: $scope.id ? $scope.id : guid(),

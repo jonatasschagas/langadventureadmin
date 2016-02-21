@@ -3,31 +3,43 @@
     <h4>Save/Edit Dialog</h4>
   </div>
   <div class="row">
-    <form class="form-horizontal" role="form">
-      <div class="form-group">
-        <label class="control-label col-sm-2">Npc:</label>
+    <form class="form-horizontal" role="form" name="dialogForm" ng-submit="save(dialogForm.$valid)"
+      novalidate>
 
+      <div class="form-group"
+           ng-class="{ 'has-error' : checkErrors(dialogForm.npcId)}">
+        <label class="control-label col-sm-2">Npc:</label>
         <div class="col-md-10">
-          <select class="form-control" ng-model="npcId">
+          <select class="form-control" name="npcId" ng-model="npcId" required>
             <option></option>
-            <option ng-repeat="npc in npcs" value="{{npc.ID}}">{{npc.Title}}</option>
+            <option ng-repeat="npc in npcs" value="{{npc.ID}}">{{npc.NpcNames[0].name}}</option>
           </select>
+          <p ng-show="checkErrors(dialogForm.npcId)"
+             class="help-block">Please select a NPC.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group"
+           ng-class="{ 'has-error' : checkErrors(dialogForm.questId)}">
         <label class="control-label col-sm-2">Quest:</label>
-
         <div class="col-md-10">
-          <select class="form-control" ng-model="questId">
+          <select class="form-control" name="questId" ng-model="questId" required>
             <option></option>
             <option ng-repeat="quest in quests" value="{{quest.ID}}">{{quest.Title}}</option>
           </select>
+          <p ng-show="checkErrors(dialogForm.questId)"
+             class="help-block">Please select a Quest.</p>
         </div>
       </div>
-
+      <div class="form-group">
+        <label class="control-label col-sm-2">Completes the Quest?:</label>
+        <div class="col-md-10">
+          <input type="checkbox" ng-model="questCompletion">
+        </div>
+      </div>
       <div class="form-group">
         <div class="col-md-12">
-          <button type="button" ng-click="save()" class="btn btn-primary btn-sm pull-right">Save</button>
+          <button type="submit" class="btn btn-primary btn-sm pull-right"
+                  ng-disabled="dialogForm.$invalid || data.length < 1">Save</button>
           <button type="button" ng-click="createQuestion()"
                   class="btn btn-primary btn-sm pull-right">Create Question/Statement
           </button>

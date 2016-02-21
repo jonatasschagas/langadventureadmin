@@ -13,7 +13,7 @@ angular.module('frontendApp')
     '$location',
     '$uibModal',
     'AuthenticationHolderService',
-    'StoryService',
+    'QuestService',
     'DialogsService',
     'Notification',
     'lodash',
@@ -22,7 +22,7 @@ angular.module('frontendApp')
       $location,
       $uibModal,
       AuthenticationHolderService,
-      StoryService,
+      QuestService,
       DialogsService,
       Notification,
       _) {
@@ -31,21 +31,22 @@ angular.module('frontendApp')
         $location.path('/Unauthorized');
       }
 
-      StoryService.list()
+      QuestService.list()
         .then(function (response) {
-          $scope.stories = response.data.items;
+          $scope.quests = response.data.items;
           $scope.$apply();
         });
 
       $scope.reload = function () {
-        DialogsService.list($scope.selectedStory)
+
+        if(!$scope.selectedQuest) {
+          return;
+        }
+
+        DialogsService.list($scope.selectedQuest)
           .then(function (response) {
             $scope.dialogs = [];
             $scope.dialogs.push.apply($scope.dialogs, response.data.items);
-            // forcing angular to re-draw the screen
-            // this happens because the changes to the scope are
-            // done outside the angular digest loop. The changes are
-            // happening in the Lambda callbacks from AWS SDK
             $scope.$apply();
           })
           .catch(function (err) {
