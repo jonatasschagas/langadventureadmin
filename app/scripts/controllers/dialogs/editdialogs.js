@@ -8,18 +8,6 @@
  * Controller of the frontendApp
  */
 
-
-/**
- * Generates a random UUID
- * @returns {string}
- */
-function guid() {
-  var S4 = function () {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  };
-  return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-}
-
 angular.module('frontendApp')
   .controller('EditDialogsCtrl',
   [
@@ -28,8 +16,6 @@ angular.module('frontendApp')
     'lodash',
     'Notification',
     function ($scope, $uibModal, _, Notification) {
-
-      $scope.templateUrl = "showNodesContentsTemplate.html";
 
       $scope.npcs = [
         {Title: "Maria", ID: "XXXXXXX"},
@@ -67,19 +53,14 @@ angular.module('frontendApp')
       }];
       ;
 
-      $scope.editNode = function (node) {
+      // triggers the edit question modal
+      $scope.editItem = function (node) {
         $scope.selectedItem = node;
-        $scope.editQuestion();
+        handleEditQuestionDialog($scope.selectedItem);
       };
 
-      $scope.changeNode = function () {
-        if ($scope.currentNode) {
-          $scope.currentNode.title = $scope.currentText;
-          $scope.currentNode.translation = $scope.currentTranslation;
-        }
-      };
-
-      $scope.cutSize = function (title) {
+      // used to limit the size from the item's title
+      $scope.cut = function (title) {
         if (title && title.length > 50) {
           return title.substring(0, 50) + '...';
         } else {
@@ -87,32 +68,31 @@ angular.module('frontendApp')
         }
       };
 
+      // removes the item from the dialog tree
       $scope.removeItem = function (node, scope) {
         removeItem($scope.data[0], node);
-        $scope.refreshParentAnswers();
         scope.remove();
+
+        function removeItem(node, item) {
+          // removing parent item
+          if (node.id == item.id) {
+            node = null;
+          }
+          if (!$scope.data) {
+            $scope.data = [];
+            $scope.parentAnswers = [];
+          }
+        }
+
       };
 
-      function removeItem(node, item) {
-        // removing parent item
-        if (node.id == item.id) {
-          node = null;
-        }
-        if (!$scope.data) {
-          $scope.data = [];
-          $scope.parentAnswers = [];
-        }
-      }
-
+      // opens the edit question dialog
       $scope.createQuestion = function () {
         handleEditQuestionDialog(null);
       };
 
-      $scope.editQuestion = function () {
-        handleEditQuestionDialog($scope.selectedItem);
-      };
-
-      $scope.refreshParentAnswers = function() {
+      // returns an array with the answers from the dialog tree
+      $scope.getParentAnswers = function() {
         function appendAnswers(answers, arrayToAppend) {
           if (answers == null) {
             return arrayToAppend;
@@ -126,11 +106,12 @@ angular.module('frontendApp')
           }
           return arrayToAppend;
         }
-        // refreshing the array of answers.
         return appendAnswers($scope.data[0].answers, []);
       };
 
+      // handles the modal that is used to create/edit the dialog items
       function handleEditQuestionDialog(item) {
+
         var questionInstance = $uibModal.open({
           animation: true,
           templateUrl: '../../../views/dialogs/editdialogitem.html',
@@ -138,7 +119,7 @@ angular.module('frontendApp')
           size: 'lg',
           resolve: {
             parentAnswers: function () {
-              return $scope.refreshParentAnswers();
+              return $scope.getParentAnswers();
             },
             item: function () {
               return item;
@@ -147,7 +128,6 @@ angular.module('frontendApp')
         });
 
         questionInstance.result.then(function (result) {
-
           function appendQuestionItem(node, item) {
             if (node.answers == null) {
               return;
@@ -176,8 +156,6 @@ angular.module('frontendApp')
           } else {
             $scope.data = [result];
           }
-
-          $scope.refreshParentAnswers();
 
           Notification.success("Question/Statement "
             + result.text + " created/edited successfully.");
@@ -212,8 +190,23 @@ angular.module('frontendApp')
         $scope.translation = null;
       }
 
+      /**
+       * Generates a random UUID
+       * @returns {string}
+       */
+      function guid() {
+        var S4 = function () {
+          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+      }
+
       $scope.addAnswer = function() {
         $scope.answers.push({ id: guid(), type: "answer" });
+      };
+
+      $scope.deleteAnswer = function(answerIdx) {
+        $scope.answers.splice(answerIdx, 1);
       };
 
       $scope.save = function () {

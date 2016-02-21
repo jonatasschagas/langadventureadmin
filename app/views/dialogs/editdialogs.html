@@ -41,16 +41,16 @@
           <!-- Nested node template -->
           <script type="text/ng-template" id="nodes_renderer.html">
             <div ui-tree-handle ng-if="node.type == 'question'" class="tree-node-question tree-node-content">
-              <a class="btn btn-info btn-xs" data-nodrag ng-click="editNode(node)"><span
+              <a class="btn btn-info btn-xs" data-nodrag ng-click="editItem(node)"><span
                 class="glyphicon glyphicon-pencil"></span></a>
-              {{cutSize(node.text)}}
+              {{cut(node.text)}}
               <a class="pull-right btn btn-danger btn-xs" data-nodrag
                  confirm="Are you sure you want to delete: {{node.text}}?"
                  ng-click="removeItem(node, this)"><span
                 class="glyphicon glyphicon-remove"></span></a>
             </div>
             <div ui-tree-handle ng-if="node.type == 'answer'" class="tree-node-answer tree-node-content">
-              {{cutSize(node.text)}}
+              {{cut(node.text)}}
             </div>
             <ol ui-tree-nodes="" ng-if="node.type == 'answer'" ng-model="node.next" ng-class="{hidden: collapsed}">
               <li ng-repeat="node in node.next" ui-tree-node ng-include="'nodes_renderer.html'">
