@@ -240,7 +240,7 @@ angular.module('frontendApp')
           id: $scope.id ? $scope.id : guid(),
           parent: $scope.parent,
           text: $scope.text,
-          translation: $scope.translation,
+          translation: $scope.translation ? $scope.translation : "...",
           type: "question",
           answers: $scope.answers
         });
