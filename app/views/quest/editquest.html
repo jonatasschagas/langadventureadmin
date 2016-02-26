@@ -5,20 +5,6 @@
   <div class="row">
     <form class="form-horizontal" role="form" name="questForm" ng-submit="save(questForm.$valid)"
           novalidate>
-      <div class="form-group"
-           ng-class="{ 'has-error' : checkErrors(questForm.storyId)}">
-        <label class="control-label col-sm-2">Story:</label>
-
-        <div class="col-md-10">
-          <select class="form-control" name="storyId" ng-model="storyId" required>
-            <option></option>
-            <option ng-repeat="story in stories" value="{{story.ID}}">{{story.Title}}</option>
-          </select>
-
-          <p ng-show="checkErrors(questForm.storyId)"
-             class="help-block">Please select a Story.</p>
-        </div>
-      </div>
       <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.title)}">
         <label class="control-label col-sm-2">Title:</label>
 
@@ -28,19 +14,6 @@
 
           <p ng-show="checkErrors(questForm.title)"
              class="help-block">Please enter a title.</p>
-        </div>
-      </div>
-      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.questOrder)}">
-        <label class="control-label col-sm-2">Quest Order:</label>
-
-        <div class="col-md-10">
-          <select class="form-control" name="questOrder" ng-model="questOrder" required>
-            <option></option>
-            <option ng-repeat="n in [] | range:100" value="{{n}}">{{n}}</option>
-          </select>
-
-          <p ng-show="checkErrors(questForm.questOrder)"
-             class="help-block">Please select the order of the quest.</p>
         </div>
       </div>
       <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.introduction)}">
@@ -64,18 +37,23 @@
              class="help-block">Please input the translation of the introduction to the Quest.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.completion)}">
         <label class="control-label col-sm-2">Completion:</label>
 
         <div class="col-md-10">
-          <textarea ng-model="completion" class="form-control" rows="3"></textarea>
+          <textarea ng-model="completion" name="completion" class="form-control" rows="3" required></textarea>
+          <p ng-show="checkErrors(questForm.completion)"
+             class="help-block">Please input an completion to the Quest.</p>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-class="{ 'has-error' : checkErrors(questForm.completionTranslation)}">
         <label class="control-label col-sm-2">Completion Translation:</label>
 
         <div class="col-md-10">
-          <textarea ng-model="completionTranslation" class="form-control" rows="3"></textarea>
+          <textarea ng-model="completionTranslation" name="completionTranslation"
+                    class="form-control" rows="3" required></textarea>
+          <p ng-show="checkErrors(questForm.completionTranslation)"
+             class="help-block">Please input an completion translation to the Quest.</p>
         </div>
       </div>
       <div class="form-group">

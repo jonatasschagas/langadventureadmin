@@ -13,26 +13,23 @@ angular.module('frontendApp')
     '$scope',
     '$uibModalInstance',
     'Notification',
-    'StoryService',
     'QuestService',
     'quest',
+    'questOrder',
+    'storyId',
     function ($scope,
               $uibModalInstance,
               Notification,
-              StoryService,
               QuestService,
-              quest) {
+              quest,
+              questOrder,
+              storyId) {
 
-      StoryService.list()
-        .then(function (response) {
-          $scope.stories = response.data.items;
-          $scope.$apply();
-        });
+      $scope.questOrder = questOrder;
+      $scope.storyId = storyId;
 
       if (quest != null) {
         $scope.quest = quest;
-        $scope.questOrder = quest.QuestOrder + "";
-        $scope.storyId = quest.StoryId;
         $scope.title = quest.Title;
         $scope.introduction = quest.Introduction;
         $scope.introductionTranslation = quest.IntroductionTranslation;
