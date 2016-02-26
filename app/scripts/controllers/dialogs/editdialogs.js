@@ -59,7 +59,7 @@ angular.module('frontendApp')
           $scope.id,
           $scope.npcId,
           $scope.questId,
-          $scope.questCompletion,
+          $scope.questCompletion ? $scope.questCompletion : false,
           $scope.data)
           .then(function (response) {
             Notification.success(response.message);
@@ -227,7 +227,7 @@ angular.module('frontendApp')
       }
 
       $scope.addAnswer = function () {
-        $scope.answers.push({id: guid(), type: "answer"});
+        $scope.answers.push({id: guid(), type: "answer", text: "...", translation: "..."});
       };
 
       $scope.deleteAnswer = function (answerIdx) {
